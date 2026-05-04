@@ -1,0 +1,27 @@
+JARALL Knowledge Center: Modifier 25 Mastery (placeholder)
+
+This is a placeholder. Real corpus ingestion replaces with the actual
+April 23, 2026 JARALL Modifier 25 Mastery article.
+
+The JARALL Standard for Modifier 25 defensibility rests on four criteria:
+
+1. Distinct Chief Complaint. The chief complaint must name a problem
+   distinct from the procedure's primary indication. A chief complaint
+   that reads as the procedure indication is a categorical failure.
+
+2. Separate Exam Findings. The exam must document findings on a body
+   part or condition not addressed by the procedure. Generic statements
+   are insufficient.
+
+3. Independent Medical Decision Making. The medical decision making
+   must address a problem with risks, data, and management options
+   independent of the procedure decision.
+
+4. Site-Specificity. When the E/M and procedure are at different
+   anatomic sites, both LT/RT or T1 to T9 modifiers must appear on the
+   claim and the documentation must support the site distinction.
+
+Each of these criteria stands on its own. A note that fails any one of
+them does not support Modifier 25 under audit. Practices using Modifier
+25 on more than 50 percent of procedural claims face Pre-Payment Reviews
+in 2026 and beyond.

@@ -1,0 +1,28 @@
+CMS National Correct Coding Initiative Policy Manual
+Chapter 1, Section 3: Modifier 25 and Same-Day Minor Procedures (placeholder)
+
+This is a placeholder reference document for the v1 demo. Real corpus
+ingestion (T109) substitutes this file with the official CMS NCCI Policy
+Manual chapters covering E/M services and Modifier 25.
+
+Modifier 25 is appended to an Evaluation and Management service to indicate
+that on the day a procedure or service identified by another HCPCS or CPT
+code was performed, the patient's condition required a significant,
+separately identifiable Evaluation and Management service above and beyond
+the usual preoperative and postoperative care associated with that
+procedure or service. The E/M service must be supported by documentation
+that meets the relevant level of service. The decision to perform a minor
+procedure during the same encounter does not by itself qualify the visit
+for a separate E/M service.
+
+A separately identifiable E/M service must be supported by a distinct
+problem. When the chief complaint is solely the indication for the
+procedure, Modifier 25 is not appropriate. When the chief complaint
+identifies an unrelated or new problem that requires evaluation, the
+E/M service may be reported with Modifier 25 if the documentation
+supports the level of service billed.
+
+When the E/M and the procedure are performed on different anatomic sites,
+both LT/RT or T1 through T9 modifiers should be appended to the
+procedure code in addition to Modifier 25 on the E/M service. Site-
+specific documentation in the encounter note is required.

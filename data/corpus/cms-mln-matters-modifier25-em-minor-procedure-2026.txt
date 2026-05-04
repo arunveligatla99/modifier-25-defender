@@ -1,0 +1,22 @@
+CMS MLN Matters Bulletin: Modifier 25 with Minor Procedures (placeholder)
+
+This is a placeholder reference document. Real corpus ingestion (T109)
+substitutes the actual MLN Matters article.
+
+Background. Payers continue to scrutinize claims that pair an Evaluation
+and Management service with a minor procedure on the same date. Modifier
+25 is the standard mechanism to indicate a significant, separately
+identifiable E/M service. Practices billing Modifier 25 on more than 50
+percent of procedural claims have historically been subject to Pre-
+Payment Reviews.
+
+Documentation requirements. The E/M note must demonstrate a distinct
+chief complaint, separate exam findings, and an independent medical
+decision. A note that reads as procedure-only workup will not support
+the modifier under audit.
+
+Common pitfalls. Submitting Modifier 25 when the chief complaint is the
+procedure indication. Documenting an exam limited to the procedure site.
+Documenting medical decision making that addresses only the procedure.
+Each of these failure modes is independently sufficient to disallow the
+E/M service.

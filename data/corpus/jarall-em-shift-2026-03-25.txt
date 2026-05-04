@@ -1,0 +1,21 @@
+JARALL Knowledge Center: 2026 E/M Shift (placeholder)
+
+This is a placeholder. Real corpus ingestion replaces with the actual
+March 25, 2026 JARALL E/M shift article.
+
+The 2026 E/M reimbursement shift increases scrutiny on documentation
+that supports a separately identifiable E/M service. The Centers for
+Medicare and Medicaid Services along with major commercial payers
+continue to deploy AI-driven claim review for Modifier 25 utilization.
+
+Practical implications for podiatry practices:
+
+- Documentation defensibility is now a revenue cycle issue. A note that
+  cannot defend an attached Modifier 25 will lose the E/M reimbursement
+  on appeal, costing time and money.
+- Provider-level utilization analytics are increasingly common. A
+  practice with greater than 50 percent of procedural claims attaching
+  Modifier 25 should expect Pre-Payment Reviews.
+- Coder review before claim submission is the most cost-effective
+  defense. A second-opinion check that scores defensibility against the
+  four-criterion JARALL Standard catches weak documentation early.

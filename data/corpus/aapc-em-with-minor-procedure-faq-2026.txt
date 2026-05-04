@@ -1,0 +1,25 @@
+AAPC FAQ: E/M with Minor Procedures (placeholder)
+
+This is a placeholder. Real corpus ingestion replaces with the publicly
+accessible AAPC FAQ article.
+
+Q: Does the decision to perform the procedure itself qualify as a
+separately identifiable E/M service?
+
+A: No. The decision-to-perform component of a minor procedure is bundled
+into the procedure's pre-operative work. To support Modifier 25, the
+documentation must establish that the E/M service addressed a problem
+distinct from that decision.
+
+Q: Can the same provider bill an E/M and a minor procedure on the same
+day for the same patient?
+
+A: Yes, when the documentation supports a distinct problem and the
+related history, exam, and medical decision making meet the level of
+service billed. Modifier 25 must be appended to the E/M service.
+
+Q: What about same-site E/M and procedure?
+
+A: When both services occur at the same anatomic site, the documentation
+must establish a separable problem that is independent of the procedure.
+Without that, the E/M service is not separately reportable.
