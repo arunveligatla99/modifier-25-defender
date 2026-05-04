@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0044_9526b137",
+  "note_text": "CC: hallux MTP pain with new midfoot stiffness\n\nHPI: weeks of symptoms relating to multiple painful calluses. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus. Peripheral vascular disease noted.\n\nExam: plantar callus area consistent with multiple painful calluses. Additional finding: mild tenderness at a separate site.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Paring of multiple hyperkeratotic lesions performed (LT and RT modifiers documented). Tolerated well, no immediate complications.",
+  "em_code": "99213",
+  "procedure_code": "11056",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "hallux_pain",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "True",
+      "procedure_type": "callus_paring_few",
+      "site": "B",
+      "em_level": "99213",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "medium",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}

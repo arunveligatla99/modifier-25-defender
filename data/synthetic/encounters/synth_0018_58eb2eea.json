@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0018_58eb2eea",
+  "note_text": "CC: thick painful nails plus new heel pain on ambulation\n\nHPI: weeks of symptoms relating to multiple thickened painful nails. Patient also reports a distinct symptom requiring separate evaluation.\n\nExam: nails examined consistent with multiple thickened painful nails; general inspection of the foot otherwise unremarkable.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Debridement of 6 or more thickened nails performed with sterile technique. Tolerated well, no immediate complications.",
+  "em_code": "99215",
+  "procedure_code": "11721",
+  "site": null,
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "thick_painful_nails",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "nail_debridement_many",
+      "site": "none",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "low",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}

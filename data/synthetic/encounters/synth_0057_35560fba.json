@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0057_35560fba",
+  "note_text": "CC: diabetic foot evaluation with new dorsal swelling\n\nHPI: 6 months of symptoms relating to thickened painful nails. Patient also reports a distinct symptom requiring separate evaluation. Peripheral vascular disease noted.\n\nExam: nails examined consistent with thickened painful nails; no other findings recorded.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Debridement of 1 to 5 thickened nails performed with sterile technique (LT and RT modifiers documented). Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99215",
+  "procedure_code": "11720",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "FAIL",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "diabetic_foot_check",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "True",
+      "procedure_type": "nail_debridement_few",
+      "site": "B",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "none",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "dev"
+}

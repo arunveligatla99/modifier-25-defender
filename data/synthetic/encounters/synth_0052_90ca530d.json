@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0052_90ca530d",
+  "note_text": "CC: ankle arthritis flare\n\nHPI: weeks of symptoms relating to first MTP joint inflammation with refractory pain.\n\nExam: first MTP joint consistent with first MTP joint inflammation with refractory pain. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents. Mentioned other complaints, no separate management plan.\n\nProcedure: Aspiration and corticosteroid injection of the first MTP joint performed (LT and RT modifiers documented). Tolerated well, no immediate complications.",
+  "em_code": "99212",
+  "procedure_code": "20600",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "PASS",
+    "independent_mdm": "FAIL",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "ankle_arthritis_flare",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "joint_injection",
+      "site": "B",
+      "em_level": "99212",
+      "separable_problem": "False",
+      "site_specificity_stated": "True",
+      "mdm_separability": "low",
+      "exam_separability": "high",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "dev"
+}

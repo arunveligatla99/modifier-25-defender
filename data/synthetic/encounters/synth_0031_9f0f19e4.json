@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0031_9f0f19e4",
+  "note_text": "CC: ankle arthritis flare with new contralateral knee pain\nHPI: weeks of symptoms relating to extensive callus burden with pain on ambulation. Patient also reports a distinct symptom requiring separate evaluation.\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Additional finding: mild tenderness at a separate site.\nMDM: discussed risks and benefits of the planned procedure; patient consents. Mentioned other complaints, no separate management plan.\nProcedure: Paring of extensive hyperkeratotic lesions performed. Tolerated well, no immediate complications.",
+  "em_code": "99212",
+  "procedure_code": "11057",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "FAIL",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "ankle_arthritis_flare",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_many",
+      "site": "B",
+      "em_level": "99212",
+      "separable_problem": "True",
+      "site_specificity_stated": "False",
+      "mdm_separability": "low",
+      "exam_separability": "medium",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "test"
+}

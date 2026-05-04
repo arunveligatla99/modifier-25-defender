@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0066_43fced7b",
+  "note_text": "CC: painful callus and new burning sensation in the forefoot\n\nHPI: 6 months of symptoms relating to multiple painful calluses. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus.\n\nExam: plantar callus area consistent with multiple painful calluses. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\n\nMDM: addressed the procedure as well as a separate complaint; considered conservative options for the separate complaint and deferred a decision.\n\nProcedure: Paring of multiple hyperkeratotic lesions performed (LT modifier documented). Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99215",
+  "procedure_code": "11056",
+  "site": "L",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "PASS",
+    "independent_mdm": "WEAK",
+    "site_specificity": "PASS",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "callus_pain",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_few",
+      "site": "L",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "medium",
+      "exam_separability": "high",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "train"
+}

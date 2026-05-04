@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0019_1e820e17",
+  "note_text": "CC: thick painful nails\nHPI: weeks of symptoms relating to multiple painful calluses. Sensory neuropathy noted on prior visits.\nExam: plantar callus area consistent with multiple painful calluses; general inspection of the foot otherwise unremarkable.\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\nProcedure: Paring of multiple hyperkeratotic lesions performed. Tolerated well, no immediate complications.",
+  "em_code": "99215",
+  "procedure_code": "11056",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "PASS",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "thick_painful_nails",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "False",
+      "procedure_type": "callus_paring_few",
+      "site": "B",
+      "em_level": "99215",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "high",
+      "exam_separability": "low",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "dev"
+}

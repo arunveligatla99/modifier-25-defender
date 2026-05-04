@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0030_c2bfcb58",
+  "note_text": "CC: follow up plantar fasciitis\n\nHPI: weeks of symptoms relating to multiple thickened painful nails. PMH: Type 2 diabetes mellitus.\n\nExam: nails examined consistent with multiple thickened painful nails; no other findings recorded.\n\nMDM: addressed the procedure as well as a separate complaint; considered conservative options for the separate complaint and deferred a decision.\n\nProcedure: Debridement of 6 or more thickened nails performed with sterile technique (RT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99212",
+  "procedure_code": "11721",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "WEAK",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "plantar_fasciitis_followup",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "nail_debridement_many",
+      "site": "R",
+      "em_level": "99212",
+      "separable_problem": "False",
+      "site_specificity_stated": "True",
+      "mdm_separability": "medium",
+      "exam_separability": "none",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}

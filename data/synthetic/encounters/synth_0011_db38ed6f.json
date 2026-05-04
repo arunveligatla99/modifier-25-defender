@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0011_db38ed6f",
+  "note_text": "CC: thick painful nails plus new heel pain on ambulation\n\nHPI: 6 months of symptoms relating to painful plantar callus. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus.\n\nExam: plantar callus area consistent with painful plantar callus; no other findings recorded.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Paring of single hyperkeratotic lesion performed. Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99212",
+  "procedure_code": "11055",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "thick_painful_nails",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_single",
+      "site": "R",
+      "em_level": "99212",
+      "separable_problem": "True",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "none",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "train"
+}

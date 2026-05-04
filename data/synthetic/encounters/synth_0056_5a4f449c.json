@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0056_5a4f449c",
+  "note_text": "CC: thick painful nails\n\nHPI: 6 months of symptoms relating to thickened painful nails. Sensory neuropathy noted on prior visits. Peripheral vascular disease noted.\n\nExam: nails examined consistent with thickened painful nails; no other findings recorded.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Debridement of 1 to 5 thickened nails performed with sterile technique. Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99213",
+  "procedure_code": "11720",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "thick_painful_nails",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "True",
+      "procedure_type": "nail_debridement_few",
+      "site": "B",
+      "em_level": "99213",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "none",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "dev"
+}

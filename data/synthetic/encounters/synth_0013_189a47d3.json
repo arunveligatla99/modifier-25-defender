@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0013_189a47d3",
+  "note_text": "CC: follow up plantar fasciitis with new lateral foot pain\n\nHPI: 6 months of symptoms relating to painful plantar callus. Patient also reports a distinct symptom requiring separate evaluation.\n\nExam: plantar callus area consistent with painful plantar callus; no other findings recorded.\n\nMDM: addressed the procedure as well as a separate complaint; considered conservative options for the separate complaint and deferred a decision.\n\nProcedure: Paring of single hyperkeratotic lesion performed. Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99215",
+  "procedure_code": "11055",
+  "site": null,
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "FAIL",
+    "independent_mdm": "WEAK",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "plantar_fasciitis_followup",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_single",
+      "site": "none",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "medium",
+      "exam_separability": "none",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "train"
+}

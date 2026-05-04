@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0021_15b639dc",
+  "note_text": "CC: painful callus on the foot\n\nHPI: weeks of symptoms relating to multiple thickened painful nails. Sensory neuropathy noted on prior visits. Peripheral vascular disease noted.\n\nExam: nails examined consistent with multiple thickened painful nails; no other findings recorded.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Debridement of 6 or more thickened nails performed with sterile technique. Tolerated well, no immediate complications.",
+  "em_code": "99212",
+  "procedure_code": "11721",
+  "site": null,
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "FAIL",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "callus_pain",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "True",
+      "procedure_type": "nail_debridement_many",
+      "site": "none",
+      "em_level": "99212",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "none",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}
