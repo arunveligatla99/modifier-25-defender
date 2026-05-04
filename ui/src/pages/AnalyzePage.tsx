@@ -12,16 +12,22 @@
  *   │                              │  RemediationPanel           │
  *   └──────────────────────────────┴─────────────────────────────┘
  *
- * Demo mode: when the backend is unreachable, we fall back to canned
- * responses bundled in src/fixtures/sampleEncounters.ts. The connection
- * indicator in the header makes this state explicit so the demo is
- * never quietly serving stale data.
+ * Connection model:
+ *   - The connection indicator is a UX hint, not an analyze gate. A
+ *     background poll (mount + every 15 s + on window focus) keeps it
+ *     fresh, so a backend that comes online mid-session updates the
+ *     dot from amber to green automatically.
+ *   - On Submit we always try the live backend first regardless of
+ *     the indicator. If the network call fails, we fall back to the
+ *     bundled fixtures. This eliminates the failure mode where a
+ *     stale "demo" indicator blocked a user from hitting a backend
+ *     that was actually reachable.
  *
  * Spec: EPIC-008. AC-008-2 (citation click highlights span), AC-008-3
  * (BLOCKED state visually distinct from PASSED).
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { analyzeEncounter, backendUrl, pingBackend } from "../api/client";
 import type { Citation, DefenderResponse, Site } from "../api/types";
@@ -46,6 +52,8 @@ const CRITERION_ORDER = [
   "site_specificity",
 ] as const;
 
+const HEALTH_POLL_MS = 15000;
+
 export function AnalyzePage(): JSX.Element {
   const [noteText, setNoteText] = useState("");
   const [emCode, setEmCode] = useState("99213");
@@ -61,19 +69,28 @@ export function AnalyzePage(): JSX.Element {
   const [connection, setConnection] = useState<ConnectionState>("checking");
   const url = backendUrl();
 
+  const refreshConnection = useCallback(async (): Promise<boolean> => {
+    const ok = await pingBackend().catch(() => false);
+    setConnection(ok ? "live" : "demo");
+    return ok;
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
-    pingBackend()
-      .then((ok) => {
-        if (!cancelled) setConnection(ok ? "live" : "demo");
-      })
-      .catch(() => {
-        if (!cancelled) setConnection("demo");
-      });
+    void refreshConnection();
+    const id = window.setInterval(() => {
+      if (!cancelled) void refreshConnection();
+    }, HEALTH_POLL_MS);
+    const onFocus = (): void => {
+      if (!cancelled) void refreshConnection();
+    };
+    window.addEventListener("focus", onFocus);
     return () => {
       cancelled = true;
+      window.clearInterval(id);
+      window.removeEventListener("focus", onFocus);
     };
-  }, []);
+  }, [refreshConnection]);
 
   const onLoadSample = (sample: SampleEncounter): void => {
     setNoteText(sample.request.note_text);
@@ -99,32 +116,45 @@ export function AnalyzePage(): JSX.Element {
       modifier_25_attached: true as const,
       site,
     };
+
+    // Try the live backend first regardless of the indicator. If it
+    // succeeds, also flip the indicator green so the UI is honest
+    // about what just served the response.
     try {
-      if (connection === "demo") {
-        // Bundled fallback: serve the canned response when the input
-        // matches one of the sample encounters; otherwise the user must
-        // start the backend.
-        const sample = findSampleByRequest(request);
-        if (!sample) {
-          throw {
-            error: "demo_no_match",
-            reason:
-              "Backend unreachable and the entered note does not match a bundled sample. Start the backend or use a sample button above.",
-          };
-        }
-        // Tiny artificial delay so the UI feels responsive.
-        await new Promise((r) => setTimeout(r, 300));
-        setResponse(sample.response);
-      } else {
-        const r = await analyzeEncounter(request);
-        setResponse(r);
-      }
-    } catch (exc) {
-      const e = exc as { error?: string; reason?: string };
-      setError(e.reason || e.error || "Request failed");
-    } finally {
+      const r = await analyzeEncounter(request);
+      setResponse(r);
+      setConnection("live");
       setBusy(false);
+      return;
+    } catch (exc) {
+      const e = exc as { error?: string; reason?: string; status?: number };
+      // A non-2xx HTTP response from a live backend is a real backend
+      // error (e.g., schema rejection); surface it instead of silently
+      // serving fixtures, which would mask a real bug.
+      if (typeof e.status === "number") {
+        setError(e.reason || e.error || `Backend returned ${e.status}`);
+        setBusy(false);
+        return;
+      }
+      // Otherwise the call failed before reaching the backend (network
+      // error, CORS, DNS, fetch abort). Fall through to the demo path.
     }
+
+    // Demo fallback: only used when the live call genuinely failed at
+    // the network layer. Indicator goes amber so the user sees the
+    // bundled-data state.
+    setConnection("demo");
+    const sample = findSampleByRequest(request);
+    if (!sample) {
+      setError(
+        "Backend unreachable and the entered note does not match a bundled sample. Start the backend, or click one of the sample buttons above to demo with bundled data.",
+      );
+      setBusy(false);
+      return;
+    }
+    await new Promise((r) => setTimeout(r, 300));
+    setResponse(sample.response);
+    setBusy(false);
   };
 
   return (
