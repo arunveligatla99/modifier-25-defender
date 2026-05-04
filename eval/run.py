@@ -44,6 +44,7 @@ from eval.adversarial.false_positive import evaluate_false_positive_rate
 from eval.adversarial.recall import evaluate_adversarial_recall
 from eval.defensibility.accuracy import evaluate_defensibility_accuracy
 from eval.defensibility.accuracy import load_test_split as load_defensibility_test_split
+from eval.faithfulness.ragas_runner import evaluate_faithfulness
 from eval.parser.field_accuracy import evaluate_field_accuracy
 from eval.parser.ground_truth import write_eval_set
 from eval.retrieval.recall_at_5 import evaluate_recall_at_5
@@ -244,6 +245,64 @@ def run_parser(payload: dict[str, Any]) -> None:
     )
 
 
+def run_faithfulness(payload: dict[str, Any]) -> None:
+    """Compute RAGAS faithfulness on the analyzer's claims (AC-004-5).
+
+    Mean faithfulness across the synthetic test split must be >= 0.88.
+    Each encounter contributes one (question, response, contexts) sample
+    where:
+
+    - response = concatenated entailed_paraphrase strings from all four
+      criteria's citations
+    - contexts = top-5 retrieved chunks per criterion (deduped)
+
+    RAGAS itself issues two LLM calls per sample (statement extraction
+    plus NLI-style judgment), so cost is ~40 calls for a 20-encounter
+    test split.
+    """
+    settings = get_settings()
+    if not settings.openai_api_key:
+        logger.warning("OPENAI_API_KEY unset; skipping faithfulness harness")
+        return
+    try:
+        from langchain_openai import ChatOpenAI
+        from ragas.llms import LangchainLLMWrapper
+        from ragas.metrics import Faithfulness
+    except ImportError as exc:
+        logger.warning("ragas/langchain unavailable (%s); skipping faithfulness", exc)
+        return
+
+    client = CachedLLMClient(
+        api_key=settings.openai_api_key,
+        model=settings.llm_model,
+        temperature=settings.llm_temperature,
+        cache_dir=settings.llm_cache_dir,
+    )
+    parser_agent = ParserAgent(client=client)
+    retriever = _build_retriever()
+    analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
+
+    judge_llm = LangchainLLMWrapper(
+        ChatOpenAI(model=settings.llm_model, temperature=0, api_key=settings.openai_api_key)
+    )
+    metric = Faithfulness(llm=judge_llm)
+
+    report = evaluate_faithfulness(parser_agent, analyzer_agent, metric)
+    if report.total == 0:
+        logger.warning("faithfulness: no scorable encounters (skipped=%d)", report.skipped)
+        return
+
+    payload["analyzer"]["faithfulness"] = round(report.mean_faithfulness, 4)
+    payload["analyzer"]["faithfulness_per_encounter"] = report.per_encounter
+    payload["analyzer"]["faithfulness_skipped"] = report.skipped
+    logger.info(
+        "ragas faithfulness mean: %.4f over %d encounters (skipped %d)",
+        report.mean_faithfulness,
+        report.total,
+        report.skipped,
+    )
+
+
 def run_defensibility(payload: dict[str, Any]) -> None:
     """Compute analyzer verdict and per-criterion accuracy on the test split.
 
@@ -325,6 +384,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the parser field-accuracy sub-harness (AC-003-2).",
     )
+    parser.add_argument(
+        "--skip-faithfulness",
+        action="store_true",
+        help="Skip the RAGAS faithfulness sub-harness (AC-004-5).",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO)
     if args.no_cache:
@@ -351,6 +415,11 @@ def main(argv: list[str] | None = None) -> int:
             run_defensibility(payload)
         except Exception as exc:
             logger.error("defensibility harness failed: %s", exc)
+    if not args.skip_faithfulness:
+        try:
+            run_faithfulness(payload)
+        except Exception as exc:
+            logger.error("faithfulness harness failed: %s", exc)
 
     out = write_report(payload, args.reports_dir)
     print(f"wrote eval report to {out}")
