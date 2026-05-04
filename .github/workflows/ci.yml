@@ -1,0 +1,151 @@
+# Modifier 25 Defender CI workflow.
+# Runs on every PR and on pushes to main. Quality gates are PR-blocking
+# (Constitution + AC-007-6). The em-dash gate, the PHI gate, and the eval
+# gate together enforce the constitutional principles I, II, IV, and the
+# coding-standards section. No advisory mode.
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: "1"
+
+jobs:
+  lint:
+    name: lint + format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.11.8"
+      - name: Sync deps
+        run: uv sync --extra dev
+      - name: Ruff
+        run: uv run ruff check app eval tests scripts
+      - name: Black --check
+        run: uv run black --check app eval tests scripts
+
+  type:
+    name: mypy strict
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.11.8"
+      - run: uv sync --extra dev
+      - name: Mypy strict on app/
+        run: uv run mypy
+
+  emdash-gate:
+    name: em-dash gate (CS-3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run em-dash check
+        run: python scripts/check_emdash.py
+
+  phi-gate:
+    name: PHI denylist gate (Principle IV)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python scripts/check_phi.py
+
+  unit-tests:
+    name: pytest unit + coverage
+    runs-on: ubuntu-latest
+    needs: [lint, type]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.11.8"
+      - run: uv sync --extra dev
+      - name: Pytest unit
+        run: uv run pytest tests/unit -v --cov=app --cov-report=term-missing --cov-fail-under=80
+
+  ui-build:
+    name: UI build + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: npm install
+        working-directory: ui
+        run: npm ci || npm install
+      - name: npm test
+        working-directory: ui
+        run: npm test
+      - name: UI build
+        working-directory: ui
+        run: npm run build
+
+  eval-gate:
+    name: eval gate (AC-007-1..AC-007-5)
+    runs-on: ubuntu-latest
+    needs: [unit-tests]
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.11.8"
+      - run: uv sync --extra dev
+      - name: Run eval harness with cache
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::warning::OPENAI_API_KEY not set; eval gate will run in cache-only mode."
+          fi
+          uv run python -m eval.run --cache-only-on-missing-key
+      - name: Check thresholds
+        run: uv run python -m eval.check_gates
+
+  threshold-change-gate:
+    name: threshold change requires rationale
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect threshold change and require rationale
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -q '^eval/thresholds.yaml$'; then
+            echo "Detected change to eval/thresholds.yaml; requiring rationale in PR body."
+            if ! echo "$PR_BODY" | grep -q "Threshold change rationale:"; then
+              echo "::error::PR modifies eval/thresholds.yaml but does not include 'Threshold change rationale:' in the description."
+              exit 1
+            fi
+            CHARS=$(echo "$PR_BODY" | awk '/Threshold change rationale:/{found=1; next} found{print}' | wc -c)
+            if [ "$CHARS" -lt 50 ]; then
+              echo "::error::Threshold change rationale must be at least 50 characters."
+              exit 1
+            fi
+          else
+            echo "No threshold change detected; skipping rationale requirement."
+          fi

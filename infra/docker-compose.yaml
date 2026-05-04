@@ -1,0 +1,109 @@
+# Modifier 25 Defender, local-only infra for v1.
+# Composes Qdrant, Postgres, Langfuse server + worker, the FastAPI backend,
+# and the Vite UI dev server.
+#
+# Reference: spec EPIC-002 (Qdrant), Constitution Principle V (Langfuse),
+# plan.md "Storage" section. Cloud deployment is out of scope for v1.
+
+name: modifier-25-defender
+
+services:
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.1
+    container_name: m25d-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:6333/healthz || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: m25d-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-m25d}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-m25d_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-m25d}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-m25d}"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  langfuse-server:
+    image: langfuse/langfuse:2
+    container_name: m25d-langfuse-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-m25d}:${POSTGRES_PASSWORD:-m25d_dev_password}@postgres:5432/${POSTGRES_DB:-m25d}
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-replace_in_env}
+      SALT: ${LANGFUSE_SALT:-replace_in_env}
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_DEFAULT_PROJECT_ID: m25d-v1
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-dev@local}
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-dev_local_password}
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-pk-lf-local}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-sk-lf-local}
+    ports:
+      - "3000:3000"
+
+  backend:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+    container_name: m25d-backend
+    restart: unless-stopped
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      QDRANT_URL: http://qdrant:6333
+      POSTGRES_DSN: postgresql://${POSTGRES_USER:-m25d}:${POSTGRES_PASSWORD:-m25d_dev_password}@postgres:5432/${POSTGRES_DB:-m25d}
+      LANGFUSE_HOST: http://langfuse-server:3000
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-pk-lf-local}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-sk-lf-local}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../app:/srv/app
+      - ../prompts:/srv/prompts
+      - ../data:/srv/data
+      - ../eval/.cache:/srv/eval/.cache
+
+  ui:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.ui
+    container_name: m25d-ui
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../ui:/srv/ui
+
+volumes:
+  qdrant_storage:
+  postgres_data:
