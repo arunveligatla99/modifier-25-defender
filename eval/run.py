@@ -30,6 +30,7 @@ from typing import Any
 
 from app.agents.analyzer.agent import AnalyzerAgent
 from app.agents.compliance_guard.nli import build_default_verifier
+from app.agents.drafter.agent import DrafterAgent
 from app.agents.parser.agent import ParserAgent
 from app.infra.settings import get_settings
 from app.llm.embeddings import embed_text
@@ -44,6 +45,14 @@ from eval.adversarial.false_positive import evaluate_false_positive_rate
 from eval.adversarial.recall import evaluate_adversarial_recall
 from eval.defensibility.accuracy import evaluate_defensibility_accuracy
 from eval.defensibility.accuracy import load_test_split as load_defensibility_test_split
+from eval.drafter.clinical_reasonableness import (
+    DEFAULT_SAMPLE_PATH as DRAFTER_SAMPLE_PATH,
+)
+from eval.drafter.clinical_reasonableness import (
+    DEFAULT_SCORES_PATH as DRAFTER_SCORES_PATH,
+)
+from eval.drafter.clinical_reasonableness import evaluate_clinical_reasonableness
+from eval.drafter.dev_sample import build_dev_sample, write_dev_sample
 from eval.faithfulness.ragas_runner import evaluate_faithfulness
 from eval.parser.field_accuracy import evaluate_field_accuracy
 from eval.parser.ground_truth import write_eval_set
@@ -245,6 +254,58 @@ def run_parser(payload: dict[str, Any]) -> None:
     )
 
 
+def run_drafter(payload: dict[str, Any], *, refresh_sample: bool = False) -> None:
+    """Score drafter clinical reasonableness from manual review (AC-006-4).
+
+    When ``refresh_sample`` is True, regenerate the dev-split sample
+    file (~20 suggestions) so a CPC-trained reviewer (or careful
+    self-review per spec language) can score them in
+    ``data/drafter_review/scores.jsonl``. Without scores, the metric
+    surfaces 0.0 and the gate fails intentionally.
+    """
+    if refresh_sample:
+        settings = get_settings()
+        if not settings.openai_api_key:
+            logger.warning("OPENAI_API_KEY unset; cannot refresh drafter sample")
+        else:
+            client = CachedLLMClient(
+                api_key=settings.openai_api_key,
+                model=settings.llm_model,
+                temperature=settings.llm_temperature,
+                cache_dir=settings.llm_cache_dir,
+            )
+            retriever = _build_retriever()
+            parser_agent = ParserAgent(client=client)
+            analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
+            drafter_agent = DrafterAgent(client=client, retriever=retriever)
+            records = build_dev_sample(parser_agent, analyzer_agent, drafter_agent)
+            written = write_dev_sample(records, DRAFTER_SAMPLE_PATH)
+            logger.info("drafter dev sample: wrote %d records to %s", written, DRAFTER_SAMPLE_PATH)
+
+    report = evaluate_clinical_reasonableness(
+        scores_path=DRAFTER_SCORES_PATH,
+        sample_path=DRAFTER_SAMPLE_PATH,
+    )
+    payload["drafter"]["clinical_reasonableness"] = round(report.rate, 4)
+    payload["drafter"]["clinical_reasonableness_total"] = report.total
+    payload["drafter"]["clinical_reasonableness_reasonable"] = report.reasonable
+    payload["drafter"]["clinical_reasonableness_pending"] = len(report.sample_ids_missing)
+    payload["drafter"]["clinical_reasonableness_per_sample"] = report.per_sample
+    if report.total == 0:
+        logger.warning(
+            "drafter scores missing at %s; metric stays at 0.0 until %d samples are reviewed",
+            DRAFTER_SCORES_PATH,
+            len(report.sample_ids_missing),
+        )
+    else:
+        logger.info(
+            "drafter clinical reasonableness: %d/%d = %.4f",
+            report.reasonable,
+            report.total,
+            report.rate,
+        )
+
+
 def run_faithfulness(payload: dict[str, Any]) -> None:
     """Compute RAGAS faithfulness on the analyzer's claims (AC-004-5).
 
@@ -389,6 +450,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the RAGAS faithfulness sub-harness (AC-004-5).",
     )
+    parser.add_argument(
+        "--skip-drafter",
+        action="store_true",
+        help="Skip the drafter clinical-reasonableness sub-harness (AC-006-4).",
+    )
+    parser.add_argument(
+        "--refresh-drafter-sample",
+        action="store_true",
+        help=(
+            "Regenerate data/drafter_review/dev_sample.jsonl from the dev "
+            "split before reading review scores. Costs ~20 LLM calls."
+        ),
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO)
     if args.no_cache:
@@ -420,6 +494,11 @@ def main(argv: list[str] | None = None) -> int:
             run_faithfulness(payload)
         except Exception as exc:
             logger.error("faithfulness harness failed: %s", exc)
+    if not args.skip_drafter:
+        try:
+            run_drafter(payload, refresh_sample=args.refresh_drafter_sample)
+        except Exception as exc:
+            logger.error("drafter harness failed: %s", exc)
 
     out = write_report(payload, args.reports_dir)
     print(f"wrote eval report to {out}")
