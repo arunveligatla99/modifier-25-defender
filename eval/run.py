@@ -240,7 +240,7 @@ def run_parser(payload: dict[str, Any]) -> None:
         temperature=settings.llm_temperature,
         cache_dir=settings.llm_cache_dir,
     )
-    parser_agent = ParserAgent(client=client)
+    parser_agent = ParserAgent(client=client, model=settings.parser_model)
 
     t0 = time.perf_counter()
     report = evaluate_field_accuracy(parser_agent, eval_path=PARSER_EVAL_PATH)
@@ -281,7 +281,7 @@ def run_drafter(payload: dict[str, Any], *, refresh_sample: bool = False) -> Non
                 cache_dir=settings.llm_cache_dir,
             )
             retriever = _build_retriever()
-            parser_agent = ParserAgent(client=client)
+            parser_agent = ParserAgent(client=client, model=settings.parser_model)
             analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
             drafter_agent = DrafterAgent(client=client, retriever=retriever)
             records = build_dev_sample(parser_agent, analyzer_agent, drafter_agent)
@@ -345,7 +345,7 @@ def run_faithfulness(payload: dict[str, Any]) -> None:
         temperature=settings.llm_temperature,
         cache_dir=settings.llm_cache_dir,
     )
-    parser_agent = ParserAgent(client=client)
+    parser_agent = ParserAgent(client=client, model=settings.parser_model)
     retriever = _build_retriever()
     analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
 
@@ -387,7 +387,7 @@ def run_defensibility(payload: dict[str, Any]) -> None:
         temperature=settings.llm_temperature,
         cache_dir=settings.llm_cache_dir,
     )
-    parser_agent = ParserAgent(client=client)
+    parser_agent = ParserAgent(client=client, model=settings.parser_model)
     retriever = _build_retriever()
     analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
 

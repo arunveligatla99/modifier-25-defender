@@ -22,7 +22,12 @@ class Settings(BaseSettings):
         langfuse_host: Langfuse server URL.
         langfuse_public_key: Langfuse public API key.
         langfuse_secret_key: Langfuse secret API key.
-        llm_model: OpenAI model identifier for synthesis.
+        llm_model: OpenAI model identifier for synthesis (analyzer, drafter).
+        parser_model: OpenAI model for the Documentation Parser. Defaults
+            to gpt-4o because gpt-4o-mini fails AC-003-2 (0.48 field
+            accuracy vs 0.90 threshold) on the multi-sentence section
+            spans. Set PARSER_MODEL=gpt-4o-mini to opt into a ~10x
+            cheaper but lower-accuracy parser.
         llm_temperature: Synthesis temperature; default 0.0 for determinism.
         embedding_model: OpenAI embedding model identifier.
         nli_model: Hugging Face NLI model identifier.
@@ -49,6 +54,7 @@ class Settings(BaseSettings):
     langfuse_public_key: str = Field(default="pk-lf-local", alias="LANGFUSE_PUBLIC_KEY")
     langfuse_secret_key: str = Field(default="sk-lf-local", alias="LANGFUSE_SECRET_KEY")
     llm_model: str = Field(default="gpt-4o", alias="LLM_MODEL")
+    parser_model: str = Field(default="gpt-4o", alias="PARSER_MODEL")
     llm_temperature: float = Field(default=0.0, alias="LLM_TEMPERATURE")
     embedding_model: str = Field(default="text-embedding-3-large", alias="EMBEDDING_MODEL")
     nli_model: str = Field(

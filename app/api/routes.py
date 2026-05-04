@@ -108,7 +108,7 @@ def _agents() -> tuple[ParserAgent, AnalyzerAgent, ComplianceGuard, DrafterAgent
         temperature=settings.llm_temperature,
         api_key=settings.openai_api_key,
     )
-    parser = ParserAgent(client=llm)
+    parser = ParserAgent(client=llm, model=settings.parser_model)
     retriever = cast(_RetrieverLike, _build_retriever())
     analyzer = AnalyzerAgent(client=llm, retriever=retriever)
     drafter = DrafterAgent(client=llm, retriever=retriever)

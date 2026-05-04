@@ -57,11 +57,16 @@ class ParserAgent:
         prompt_path: Path to the prompt template; defaults to ``v1``.
         max_retries: Number of schema-validation retries before raising.
             v1 design AC-003-4 specifies exactly one retry.
+        model: Optional OpenAI model override. Parser is structured
+            extraction (no creative reasoning), so callers typically
+            pass gpt-4o-mini to cut cost ~10x vs the default analyzer
+            model.
     """
 
     client: _LLMClientLike
     prompt_path: Path = PARSER_PROMPT_PATH
     max_retries: int = 1
+    model: str | None = None
 
     def parse(self, note_text: str) -> ParsedEncounter:
         """Parse the encounter note into a :class:`ParsedEncounter`.
@@ -80,6 +85,7 @@ class ParserAgent:
             client=self.client,
             prompt_path=self.prompt_path,
             max_retries=self.max_retries,
+            model=self.model,
         )
 
 
@@ -89,6 +95,7 @@ def parse_encounter(
     client: _LLMClientLike,
     prompt_path: Path = PARSER_PROMPT_PATH,
     max_retries: int = 1,
+    model: str | None = None,
 ) -> ParsedEncounter:
     """Functional entry point used by both :class:`ParserAgent` and the orchestrator.
 
@@ -97,6 +104,9 @@ def parse_encounter(
         client: Cached LLM client (or test stub).
         prompt_path: Path to the prompt template.
         max_retries: Number of validation retries before raising.
+        model: Optional OpenAI model override; ``None`` uses the
+            client's default. Callers typically pass
+            ``settings.parser_model`` (gpt-4o-mini) here.
 
     Returns:
         A validated :class:`ParsedEncounter`.
@@ -129,6 +139,7 @@ def parse_encounter(
             messages=messages,
             response_format=strict_schema_for(ParsedEncounter),
             temperature=0.0,
+            model=model,
         )
         try:
             payload = json.loads(response.content)
