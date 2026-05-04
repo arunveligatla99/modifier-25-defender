@@ -28,9 +28,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from app.agents.analyzer.agent import AnalyzerAgent
 from app.agents.compliance_guard.nli import build_default_verifier
+from app.agents.parser.agent import ParserAgent
 from app.infra.settings import get_settings
 from app.llm.embeddings import embed_text
+from app.llm.openai_client import CachedLLMClient
 from app.retrieval.bm25 import BM25Index
 from app.retrieval.qdrant import QdrantIndex
 from app.retrieval.reranker import RerankerStub
@@ -39,6 +42,7 @@ from app.schemas.corpus import CorpusChunk
 
 from eval.adversarial.false_positive import evaluate_false_positive_rate
 from eval.adversarial.recall import evaluate_adversarial_recall
+from eval.defensibility.accuracy import evaluate_defensibility_accuracy
 from eval.retrieval.recall_at_5 import evaluate_recall_at_5
 
 logger = logging.getLogger(__name__)
@@ -133,7 +137,7 @@ def _build_retriever() -> Retriever:
 
     return Retriever(
         bm25=bm25,
-        dense=_SafeDense(),  # type: ignore[arg-type]
+        dense=_SafeDense(),
         reranker=RerankerStub(top_n=5),
         embed=_safe_embed,
     )
@@ -190,6 +194,48 @@ def run_compliance_guard(payload: dict[str, Any]) -> None:
         )
 
 
+def run_defensibility(payload: dict[str, Any]) -> None:
+    """Compute analyzer verdict and per-criterion accuracy on the test split.
+
+    AC-004-2 (verdict_accuracy >= 0.85, lenient on WEAK) and AC-004-3
+    (per_criterion_accuracy >= 0.80). Cost is real: ~5 LLM calls per
+    encounter (1 parser + 4 analyzer criteria) at gpt-4o pricing.
+    """
+    settings = get_settings()
+    if not settings.openai_api_key:
+        logger.warning("OPENAI_API_KEY unset; skipping defensibility accuracy harness")
+        return
+    client = CachedLLMClient(
+        api_key=settings.openai_api_key,
+        model=settings.llm_model,
+        temperature=settings.llm_temperature,
+        cache_dir=settings.llm_cache_dir,
+    )
+    parser_agent = ParserAgent(client=client)
+    retriever = _build_retriever()
+    analyzer_agent = AnalyzerAgent(client=client, retriever=retriever)
+
+    report = evaluate_defensibility_accuracy(parser_agent, analyzer_agent)
+    if report.total == 0:
+        logger.warning("defensibility test split empty; nothing to score")
+        return
+
+    payload["analyzer"]["verdict_accuracy"] = round(report.verdict_accuracy, 4)
+    payload["analyzer"]["per_criterion_accuracy"] = round(report.per_criterion_accuracy, 4)
+    payload["analyzer"]["latency_p95_seconds"] = round(report.latency_p95_seconds, 4)
+    payload["analyzer"]["defensibility_total"] = report.total
+    payload["analyzer"]["defensibility_verdict_correct"] = report.verdict_correct
+    payload["analyzer"]["defensibility_per_criterion_correct"] = report.per_criterion_correct
+    payload["analyzer"]["defensibility_per_encounter"] = report.per_encounter
+    logger.info(
+        "defensibility verdict accuracy: %d/%d = %.4f; per-criterion = %.4f",
+        report.verdict_correct,
+        report.total,
+        report.verdict_accuracy,
+        report.per_criterion_accuracy,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     parser = argparse.ArgumentParser(prog="eval.run")
@@ -219,6 +265,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the Compliance Guard adversarial sub-harness.",
     )
+    parser.add_argument(
+        "--skip-defensibility",
+        action="store_true",
+        help="Skip the analyzer defensibility-accuracy sub-harness (AC-004-2/3).",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO)
     if args.no_cache:
@@ -235,6 +286,11 @@ def main(argv: list[str] | None = None) -> int:
             run_compliance_guard(payload)
         except Exception as exc:
             logger.error("compliance guard harness failed: %s", exc)
+    if not args.skip_defensibility:
+        try:
+            run_defensibility(payload)
+        except Exception as exc:
+            logger.error("defensibility harness failed: %s", exc)
 
     out = write_report(payload, args.reports_dir)
     print(f"wrote eval report to {out}")
