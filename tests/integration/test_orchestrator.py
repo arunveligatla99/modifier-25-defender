@@ -100,6 +100,7 @@ def _criterion_payload(verdict: str, span_text: str = "x") -> str:
                         "Stub rationale that the NLI verifier will entail with the "
                         "default high score."
                     ),
+                    "entailed_paraphrase": "Stub paraphrase the NLI verifier entails.",
                 }
             ],
         }

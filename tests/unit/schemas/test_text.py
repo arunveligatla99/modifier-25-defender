@@ -57,6 +57,7 @@ class TestCitation:
             source_type="encounter",
             span=self._span(),
             rationale="explanation",
+            entailed_paraphrase="x is the cited content.",
         )
         assert c.policy_id is None
 
@@ -67,6 +68,7 @@ class TestCitation:
                 span=self._span(),
                 policy_id="cms-foo",
                 rationale="explanation",
+                entailed_paraphrase="x",
             )
 
     def test_policy_citation_requires_policy_id(self) -> None:
@@ -75,6 +77,7 @@ class TestCitation:
                 source_type="policy",
                 span=self._span(),
                 rationale="explanation",
+                entailed_paraphrase="x",
             )
 
     def test_policy_citation_with_id(self) -> None:
@@ -83,11 +86,46 @@ class TestCitation:
             span=self._span(),
             policy_id="cms-ncci-em-modifier25-2026-ch1-sec3",
             rationale="explanation",
+            entailed_paraphrase="paraphrase of policy span",
         )
         assert c.policy_id is not None
 
     def test_rationale_length_bounds(self) -> None:
         with pytest.raises(ValidationError):
-            Citation(source_type="encounter", span=self._span(), rationale="")
+            Citation(
+                source_type="encounter",
+                span=self._span(),
+                rationale="",
+                entailed_paraphrase="x",
+            )
         with pytest.raises(ValidationError):
-            Citation(source_type="encounter", span=self._span(), rationale="x" * 1001)
+            Citation(
+                source_type="encounter",
+                span=self._span(),
+                rationale="x" * 1001,
+                entailed_paraphrase="x",
+            )
+
+    def test_entailed_paraphrase_required(self) -> None:
+        with pytest.raises(ValidationError):
+            Citation(  # type: ignore[call-arg]
+                source_type="encounter",
+                span=self._span(),
+                rationale="x",
+            )
+
+    def test_entailed_paraphrase_length_bounds(self) -> None:
+        with pytest.raises(ValidationError):
+            Citation(
+                source_type="encounter",
+                span=self._span(),
+                rationale="x",
+                entailed_paraphrase="",
+            )
+        with pytest.raises(ValidationError):
+            Citation(
+                source_type="encounter",
+                span=self._span(),
+                rationale="x",
+                entailed_paraphrase="y" * 501,
+            )

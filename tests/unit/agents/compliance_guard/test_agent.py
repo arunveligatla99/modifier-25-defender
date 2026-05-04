@@ -21,20 +21,33 @@ from app.schemas.remediation import RemediationSuggestion
 from app.schemas.text import Citation, TextSpan
 
 
-def _enc_citation(text: str, rationale: str = "explanation") -> Citation:
+def _enc_citation(
+    text: str,
+    rationale: str = "explanation",
+    *,
+    entailed_paraphrase: str | None = None,
+) -> Citation:
     return Citation(
         source_type="encounter",
         span=TextSpan(text=text, start_char=0, end_char=len(text)),
         rationale=rationale,
+        entailed_paraphrase=entailed_paraphrase or text,
     )
 
 
-def _policy_citation(policy_id: str, span_text: str, rationale: str) -> Citation:
+def _policy_citation(
+    policy_id: str,
+    span_text: str,
+    rationale: str,
+    *,
+    entailed_paraphrase: str | None = None,
+) -> Citation:
     return Citation(
         source_type="policy",
         span=TextSpan(text=span_text, start_char=0, end_char=len(span_text)),
         policy_id=policy_id,
         rationale=rationale,
+        entailed_paraphrase=entailed_paraphrase or span_text,
     )
 
 
@@ -154,11 +167,19 @@ class TestComplianceGuardVerify:
         bad_remediation = RemediationSuggestion(
             criterion="independent_mdm",
             suggested_addition="Add an independent decision...",
-            motivation=[_policy_citation("policy-x", "policy span", "rationale that NLI rejects")],
+            motivation=[
+                _policy_citation(
+                    "policy-x",
+                    "policy span",
+                    "rationale ignored by NLI",
+                    entailed_paraphrase="paraphrase that NLI rejects",
+                )
+            ],
         )
-        # NLI returns 0.5 for the rejected pair, 0.99 for everything else.
+        # NLI verifies entailed_paraphrase against the resolved policy text;
+        # the rationale is no longer the hypothesis (5a path).
         scores = {
-            ("policy span passage", "rationale that NLI rejects"): 0.5,
+            ("policy span passage", "paraphrase that NLI rejects"): 0.5,
         }
         # Build the index so the policy citation resolves.
         policy_index = {"policy-x": "policy span passage"}

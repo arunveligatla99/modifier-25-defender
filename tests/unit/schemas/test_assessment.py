@@ -18,6 +18,7 @@ def _ev(rationale: str = "explanation") -> Citation:
         source_type="encounter",
         span=TextSpan(text="x", start_char=0, end_char=1),
         rationale=rationale,
+        entailed_paraphrase="x",
     )
 
 

@@ -65,8 +65,9 @@ class Citation(BaseModel):
     """Traceable evidence linking a model claim to a span of source text.
 
     A claim made by an agent must be supported by at least one citation
-    (Constitution Principle I). The Compliance Guard verifies via NLI that the
-    cited span entails the rationale.
+    (Constitution Principle I). The Compliance Guard verifies via NLI that
+    the cited span entails the ``entailed_paraphrase`` (NOT the
+    ``rationale``).
 
     Attributes:
         source_type: Where the cited span lives.
@@ -75,7 +76,14 @@ class Citation(BaseModel):
             the active corpus snapshot. Must be ``None`` when
             ``source_type == "encounter"``.
         rationale: The agent's reasoning linking the cited span to the
-            verdict or claim. 1 to 1000 characters.
+            verdict or claim. Free-form interpretive prose. 1 to 1000
+            characters. NOT verified by NLI; surfaced to the user.
+        entailed_paraphrase: A plain restatement of the cited span's
+            content suitable as an NLI hypothesis. Must be derivable from
+            the span via straightforward inference (no meta-claims about
+            the span, no comparisons to other text). 1 to 500 characters.
+            VERIFIED BY THE COMPLIANCE GUARD: spec R4 mitigation against
+            NLI conservativeness on interpretive rationales (5a path).
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -84,6 +92,7 @@ class Citation(BaseModel):
     span: TextSpan
     policy_id: str | None = None
     rationale: str = Field(..., min_length=1, max_length=1000)
+    entailed_paraphrase: str = Field(..., min_length=1, max_length=500)
 
     @model_validator(mode="after")
     def _check_policy_id(self) -> Citation:

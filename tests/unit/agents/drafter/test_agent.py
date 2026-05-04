@@ -25,6 +25,7 @@ def _ev() -> Citation:
         source_type="encounter",
         span=TextSpan(text="x", start_char=0, end_char=1),
         rationale="r",
+        entailed_paraphrase="x",
     )
 
 
@@ -122,6 +123,7 @@ def _envelope(criteria: list[str]) -> str:
                             },
                             "policy_id": f"chunk-{i + 1}",
                             "rationale": "r",
+                            "entailed_paraphrase": "p",
                         }
                     ],
                 }

@@ -18,6 +18,7 @@ from typing import Any, Protocol
 from pydantic import BaseModel, Field, ValidationError
 
 from app.llm.openai_client import LLMResponse
+from app.llm.schema import strict_schema_for
 from app.schemas.assessment import DefensibilityAssessment
 from app.schemas.parser import ParsedEncounter
 from app.schemas.remediation import CriterionName, RemediationSuggestion
@@ -138,7 +139,7 @@ def draft_remediations(
         response = client.chat(
             messages=messages,
             retrieval_context=retrieval_payload,
-            response_format={"type": "json_object"},
+            response_format=strict_schema_for(_DrafterEnvelope, name="DrafterEnvelope"),
             temperature=0.0,
         )
         try:

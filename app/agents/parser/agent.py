@@ -21,6 +21,7 @@ from typing import Any, Protocol
 from pydantic import ValidationError
 
 from app.llm.openai_client import LLMResponse
+from app.llm.schema import strict_schema_for
 from app.schemas.parser import ParsedEncounter
 
 logger = logging.getLogger(__name__)
@@ -126,7 +127,7 @@ def parse_encounter(
             )
         response = client.chat(
             messages=messages,
-            response_format={"type": "json_object"},
+            response_format=strict_schema_for(ParsedEncounter),
             temperature=0.0,
         )
         try:

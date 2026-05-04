@@ -218,16 +218,21 @@ def _verify_citation(
     verifier: NLIVerifier,
     threshold: float,
 ) -> VerificationFailure | None:
-    """Verify one citation; return a :class:`VerificationFailure` or ``None``."""
+    """Verify one citation; return a :class:`VerificationFailure` or ``None``.
+
+    Per spec R4 (5a path): NLI verifies ``citation.entailed_paraphrase``
+    (the LLM-emitted content paraphrase of the cited span), NOT
+    ``citation.rationale`` (which is interpretive and free-form).
+    """
     premise = _premise_for(citation, parsed=parsed, policy_text_index=policy_text_index)
     if premise is None:
         return VerificationFailure(
             location=location,
-            rationale=citation.rationale,
+            rationale=citation.entailed_paraphrase,
             cited_span=citation.span.text,
             entailment_score=0.0,
         )
-    hypothesis = citation.rationale
+    hypothesis = citation.entailed_paraphrase
     score = verifier.entailment_probability(premise, hypothesis)
     if score >= threshold:
         return None

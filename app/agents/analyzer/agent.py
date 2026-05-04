@@ -23,6 +23,7 @@ from typing import Any, Protocol
 from pydantic import ValidationError
 
 from app.llm.openai_client import LLMResponse
+from app.llm.schema import strict_schema_for
 from app.schemas.assessment import (
     CriteriaMap,
     CriterionScore,
@@ -201,7 +202,7 @@ def _call_criterion(
         response = client.chat(
             messages=messages,
             retrieval_context=retrieval_payload,
-            response_format={"type": "json_object"},
+            response_format=strict_schema_for(CriterionScore),
             temperature=0.0,
         )
         try:
@@ -309,6 +310,7 @@ def _same_site_passthrough(note_blob: str) -> CriterionScore:
             "Site-specificity is N/A for same-site encounters and is encoded "
             "as PASS with confidence=1.0 per the data-model contract."
         ),
+        entailed_paraphrase=span.text,
     )
     return CriterionScore(verdict="PASS", confidence=1.0, evidence=[citation])
 

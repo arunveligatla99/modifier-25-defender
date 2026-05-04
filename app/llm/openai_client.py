@@ -74,6 +74,9 @@ class CacheKeyInputs:
         model: Provider-reported model identifier.
         temperature: Sampling temperature.
         provider: Provider tag (``"openai"`` for v1).
+        response_format: JSON-serialized response format spec. Included so
+            switching between ``json_object`` and ``json_schema`` (or
+            changing the schema itself) invalidates stale cache entries.
     """
 
     prompt: str
@@ -81,6 +84,7 @@ class CacheKeyInputs:
     model: str
     temperature: float
     provider: str
+    response_format: str = ""
 
 
 def cache_key(inputs: CacheKeyInputs) -> str:
@@ -99,6 +103,7 @@ def cache_key(inputs: CacheKeyInputs) -> str:
             "model": inputs.model,
             "temperature": inputs.temperature,
             "provider": inputs.provider,
+            "response_format": inputs.response_format,
         },
         sort_keys=True,
         ensure_ascii=False,
@@ -188,6 +193,7 @@ class CachedLLMClient(BaseModel):
         used_temp = self.temperature if temperature is None else temperature
         prompt_blob = json.dumps(messages, sort_keys=True, ensure_ascii=False)
         ctx_blob = json.dumps(retrieval_context or {}, sort_keys=True, ensure_ascii=False)
+        rf_blob = json.dumps(response_format or {}, sort_keys=True, ensure_ascii=False)
 
         key = cache_key(
             CacheKeyInputs(
@@ -196,6 +202,7 @@ class CachedLLMClient(BaseModel):
                 model=used_model,
                 temperature=used_temp,
                 provider=PROVIDER_TAG,
+                response_format=rf_blob,
             )
         )
 

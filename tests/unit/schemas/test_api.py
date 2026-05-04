@@ -20,6 +20,7 @@ def _evidence() -> list[Citation]:
             source_type="encounter",
             span=TextSpan(text="x", start_char=0, end_char=1),
             rationale="why",
+            entailed_paraphrase="x",
         )
     ]
 

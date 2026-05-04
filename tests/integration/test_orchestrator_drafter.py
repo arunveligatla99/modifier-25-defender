@@ -77,6 +77,7 @@ def test_weak_path_invokes_drafter_and_passes() -> None:
                         "span": {"text": "x", "start_char": 0, "end_char": 1},
                         "policy_id": None,
                         "rationale": "stub",
+                        "entailed_paraphrase": "stub paraphrase",
                     }
                 ],
             }
@@ -100,6 +101,7 @@ def test_weak_path_invokes_drafter_and_passes() -> None:
                             },
                             "policy_id": "policy-1",
                             "rationale": "policy supports the suggestion",
+                            "entailed_paraphrase": "policy text",
                         }
                     ],
                 }

@@ -29,6 +29,7 @@ def _criterion_payload(verdict: str, conf: float = 0.9) -> str:
                     "span": {"text": "x", "start_char": 0, "end_char": 1},
                     "policy_id": None,
                     "rationale": "stub",
+                    "entailed_paraphrase": "stub paraphrase",
                 }
             ],
         }

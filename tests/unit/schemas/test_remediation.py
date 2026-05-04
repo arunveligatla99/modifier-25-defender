@@ -14,6 +14,7 @@ def _policy_citation() -> Citation:
         span=TextSpan(text="x", start_char=0, end_char=1),
         policy_id="cms-foo",
         rationale="reason",
+        entailed_paraphrase="x",
     )
 
 
