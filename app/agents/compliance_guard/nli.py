@@ -1,7 +1,7 @@
 """NLI verification wrapper for the Compliance Guard.
 
 Implements EPIC-005's local-inference NLI step. Real production wraps
-``microsoft/deberta-v3-large-mnli`` (or any HF NLI head loadable via
+``MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`` (or any HF NLI head loadable via
 ``transformers``); the heavy model load is lazy. Tests should always use
 :class:`NLIStub` to avoid pulling weights.
 
@@ -17,7 +17,7 @@ from typing import Protocol
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "microsoft/deberta-v3-large-mnli"
+DEFAULT_MODEL = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
 
 
 class NLIVerifier(Protocol):

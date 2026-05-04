@@ -37,7 +37,7 @@ Honest list of what v1 does and does not do. Source: spec
 - LangGraph Postgres checkpoint persistence. v1 ships with the
   synchronous orchestrator and trace_id replay.
 - Real Hugging Face NLI weights wired into CI. v1 unit tests use
-  `NLIStub`; the production path lazy-loads `microsoft/deberta-v3-large-mnli`.
+  `NLIStub`; the production path lazy-loads `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`.
 - Provider-level utilization analytics.
 - Coder feedback loop (thumbs up/down on remediations).
 - Batch CSV upload mode.

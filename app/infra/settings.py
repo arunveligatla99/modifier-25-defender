@@ -51,7 +51,10 @@ class Settings(BaseSettings):
     llm_model: str = Field(default="gpt-4o", alias="LLM_MODEL")
     llm_temperature: float = Field(default=0.0, alias="LLM_TEMPERATURE")
     embedding_model: str = Field(default="text-embedding-3-large", alias="EMBEDDING_MODEL")
-    nli_model: str = Field(default="microsoft/deberta-v3-large-mnli", alias="NLI_MODEL")
+    nli_model: str = Field(
+        default="MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+        alias="NLI_MODEL",
+    )
     nli_threshold: float = Field(default=0.75, alias="NLI_THRESHOLD")
     llm_cache_dir: Path = Field(default=Path("eval/.cache"), alias="LLM_CACHE_DIR")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")

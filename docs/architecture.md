@@ -137,4 +137,4 @@ parser, analyzer, drafter (when invoked), and compliance_guard. Every
 - LangGraph checkpoint persistence to Postgres. The synchronous
   orchestrator does not need it; trace_id replay is sufficient for v1.
 - Real Hugging Face NLI weights. Tests use `NLIStub` and the production
-  path lazy-loads `microsoft/deberta-v3-large-mnli`.
+  path lazy-loads `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`.
