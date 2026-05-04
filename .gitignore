@@ -344,3 +344,14 @@ desktop.ini
 .claude/projects/
 .claude/cache/
 .claude/sessions/
+
+# =====================================================================
+# Eval artifacts
+# Reports are generated; the latest report symlink is overwritten on
+# each run. Cache is content-hash keyed; never commit it.
+# =====================================================================
+eval/.cache/
+eval/reports/
+
+# Python venv (uv default)
+.venv/
