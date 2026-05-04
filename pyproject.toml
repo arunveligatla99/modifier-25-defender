@@ -107,8 +107,9 @@ warn_redundant_casts = true
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["transformers.*", "sentence_transformers.*", "rank_bm25.*", "ragas.*"]
+module = ["transformers.*", "sentence_transformers.*", "rank_bm25.*", "ragas.*", "langfuse.*"]
 ignore_missing_imports = true
+follow_imports = "skip"
 
 # ---------------------------------------------------------------------------
 # Test configuration

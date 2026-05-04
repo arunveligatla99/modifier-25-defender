@@ -129,9 +129,9 @@ def main() -> int:
 
     if hits:
         sys.stderr.write(
-            f"em-dash gate: found {len(hits)} occurrence(s) of U+2014 (em-dash) in curated text.\n"
+            f"em-dash gate: found {len(hits)} occurrence(s) of U+2014 in curated text.\n"
             "Replace with comma, period, colon, parentheses, or rephrase.\n"
-            "Constitution CS-3 (specs/001-modifier-25-defender/research.md R10) is non-negotiable.\n\n"
+            "Constitution CS-3 (research.md R10) is non-negotiable.\n\n"
         )
         for path, lineno, line in hits:
             sys.stderr.write(f"{path}:{lineno}: {line}\n")

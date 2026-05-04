@@ -60,7 +60,10 @@ PATTERNS: dict[str, re.Pattern[str]] = {
     "ssn": re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
     "mrn": re.compile(r"\bMRN\s*:\s*[A-Z0-9-]{4,}", re.IGNORECASE),
     "dob_label_iso": re.compile(r"\b(?:DOB|Date of Birth)\s*:\s*\d{4}-\d{2}-\d{2}", re.IGNORECASE),
-    "dob_label_us": re.compile(r"\b(?:DOB|Date of Birth)\s*:\s*\d{1,2}/\d{1,2}/\d{4}", re.IGNORECASE),
+    "dob_label_us": re.compile(
+        r"\b(?:DOB|Date of Birth)\s*:\s*\d{1,2}/\d{1,2}/\d{4}",
+        re.IGNORECASE,
+    ),
     "phone_us": re.compile(r"\(\d{3}\)\s?\d{3}-\d{4}"),
 }
 
