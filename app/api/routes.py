@@ -17,6 +17,7 @@ from fastapi import APIRouter, HTTPException
 from app.agents.analyzer import AnalyzerAgent
 from app.agents.analyzer.agent import _RetrieverLike
 from app.agents.compliance_guard import ComplianceGuard, build_default_verifier
+from app.agents.drafter import DrafterAgent
 from app.agents.orchestrator import orchestrate_request
 from app.agents.parser import ParserAgent
 from app.infra.settings import get_settings
@@ -63,14 +64,14 @@ async def analyze(request: DefenderRequest) -> DefenderResponse:
             },
         )
 
-    parser, analyzer, guard, policy_index = _agents()
+    parser, analyzer, guard, drafter, policy_index = _agents()
     return orchestrate_request(
         request,
         parser=parser,
         analyzer=analyzer,
         guard=guard,
         policy_text_index=policy_index,
-        drafter=None,  # US2 wires the drafter in T203
+        drafter=drafter,
         langfuse=get_langfuse_client(),
     )
 
@@ -96,7 +97,7 @@ def _load_allowlist() -> set[str]:
 
 
 @lru_cache(maxsize=1)
-def _agents() -> tuple[ParserAgent, AnalyzerAgent, ComplianceGuard, dict[str, str]]:
+def _agents() -> tuple[ParserAgent, AnalyzerAgent, ComplianceGuard, DrafterAgent, dict[str, str]]:
     """Construct the agent stack once. Cached for the process lifetime."""
     settings = get_settings()
     llm = CachedLLMClient(
@@ -108,9 +109,10 @@ def _agents() -> tuple[ParserAgent, AnalyzerAgent, ComplianceGuard, dict[str, st
     parser = ParserAgent(client=llm)
     retriever = cast(_RetrieverLike, _build_retriever())
     analyzer = AnalyzerAgent(client=llm, retriever=retriever)
+    drafter = DrafterAgent(client=llm, retriever=retriever)
     guard = ComplianceGuard(verifier=build_default_verifier(model_name=settings.nli_model))
     policy_index = _load_policy_index()
-    return parser, analyzer, guard, policy_index
+    return parser, analyzer, guard, drafter, policy_index
 
 
 def _build_retriever() -> object:
