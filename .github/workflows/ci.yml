@@ -68,6 +68,16 @@ jobs:
           python-version: "3.11"
       - run: python scripts/check_phi.py
 
+  import-graph-gate:
+    name: import-graph lint (Principle II / T138)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python scripts/check_imports.py
+
   unit-tests:
     name: pytest unit + coverage
     runs-on: ubuntu-latest

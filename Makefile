@@ -32,6 +32,7 @@ help:
 	@echo "  make check              - lint + type + format check + em-dash + phi"
 	@echo "  make check-emdash       - run em-dash gate (Constitution CS-3, T011)"
 	@echo "  make check-phi          - run PHI denylist gate (Constitution Principle IV, T028)"
+	@echo "  make check-imports      - import-graph lint (Constitution Principle II, T138)"
 	@echo "  make up                 - docker compose up -d"
 	@echo "  make down               - docker compose down"
 	@echo "  make logs               - docker compose logs -f"
@@ -110,12 +111,16 @@ check: lint type
 	$(BLACK) --check app eval tests scripts
 	$(MAKE) check-emdash
 	$(MAKE) check-phi
+	$(MAKE) check-imports
 
 check-emdash:
 	$(PYTHON) scripts/check_emdash.py
 
 check-phi:
 	$(PYTHON) scripts/check_phi.py
+
+check-imports:
+	$(PYTHON) scripts/check_imports.py
 
 # ----- Docker compose -----
 
