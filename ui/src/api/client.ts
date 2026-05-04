@@ -59,7 +59,7 @@ export async function pingBackend(
   } = {},
 ): Promise<boolean> {
   const fetcher = options.fetcher ?? fetch;
-  const url = `${options.backendOverride ?? backendUrl()}/health`;
+  const url = `${options.backendOverride ?? backendUrl()}/healthz`;
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), options.timeoutMs ?? 1500);
   try {

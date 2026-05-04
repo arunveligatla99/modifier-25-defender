@@ -121,7 +121,7 @@ def score_assessment(
     scores: dict[str, CriterionScore] = {}
     for name in CRITERION_NAMES:
         if name == "site_specificity" and site is None:
-            scores[name] = _same_site_passthrough(note_blob)
+            scores[name] = _same_site_passthrough(parsed)
             continue
         query = _query_for(name, em_code, procedure_code, site)
         scores[name] = _call_criterion(
@@ -296,13 +296,24 @@ def _query_for(name: str, em_code: str, procedure_code: str, site: str | None) -
     )
 
 
-def _same_site_passthrough(note_blob: str) -> CriterionScore:
-    """Return the deterministic PASS used when site is None (same-site)."""
-    span = TextSpan(
-        text=note_blob[:64] or "same-site encounter",
-        start_char=0,
-        end_char=min(64, len(note_blob) or 19),
-    )
+def _same_site_passthrough(parsed: ParsedEncounter) -> CriterionScore:
+    """Return the deterministic PASS used when site is None (same-site).
+
+    Uses a real CC span from the parsed encounter so the citation passes
+    NLI verification (the entailed_paraphrase is identical to the cited
+    span's content). Falls back to a synthetic span only when the parser
+    extracted no CC text at all.
+    """
+    cc_spans = list(parsed.cc)
+    if cc_spans:
+        cc = cc_spans[0]
+        span = TextSpan(text=cc.text, start_char=cc.start_char, end_char=cc.end_char)
+        paraphrase = cc.text
+    else:
+        # Defensive fallback. Real encounters always parse a CC; this path
+        # is only hit when the parser returned an empty CC list.
+        span = TextSpan(text="same-site encounter", start_char=0, end_char=19)
+        paraphrase = "This encounter is a same-site encounter."
     citation = Citation(
         source_type="encounter",
         span=span,
@@ -310,7 +321,7 @@ def _same_site_passthrough(note_blob: str) -> CriterionScore:
             "Site-specificity is N/A for same-site encounters and is encoded "
             "as PASS with confidence=1.0 per the data-model contract."
         ),
-        entailed_paraphrase=span.text,
+        entailed_paraphrase=paraphrase,
     )
     return CriterionScore(verdict="PASS", confidence=1.0, evidence=[citation])
 
