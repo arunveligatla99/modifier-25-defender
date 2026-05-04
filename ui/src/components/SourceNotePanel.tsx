@@ -22,8 +22,14 @@ export function SourceNotePanel(props: SourceNotePanelProps): JSX.Element {
       </pre>
     );
   }
-  const start = Math.max(0, Math.min(highlight.span.start_char, noteText.length));
-  const end = Math.max(start, Math.min(highlight.span.end_char, noteText.length));
+  const start = Math.max(
+    0,
+    Math.min(highlight.span.start_char, noteText.length),
+  );
+  const end = Math.max(
+    start,
+    Math.min(highlight.span.end_char, noteText.length),
+  );
   const before = noteText.slice(0, start);
   const middle = noteText.slice(start, end);
   const after = noteText.slice(end);

@@ -1,9 +1,12 @@
 /**
- * Typed POST /analyze client.
+ * Typed POST /analyze client with demo-mode fallback.
  *
- * Production deployments may target a different backend host; configure via
- * the VITE_BACKEND_URL environment variable (see infra/docker-compose.yaml).
- * The fetcher is injectable for testing.
+ * Production: hits VITE_BACKEND_URL (default http://localhost:8000) /analyze.
+ * Demo: when the backend is unreachable, the AnalyzePage falls back to
+ * canned responses bundled in src/fixtures/sampleEncounters.ts so the
+ * UI is usable for live demos without infra.
+ *
+ * The fetcher is injectable for unit tests.
  */
 
 import type { DefenderRequest, DefenderResponse } from "./types";
@@ -19,10 +22,9 @@ export type FetchLike = typeof fetch;
 
 const DEFAULT_BACKEND_URL = "http://localhost:8000";
 
-function backendUrl(): string {
-  const env =
-    typeof import.meta !== "undefined" ? import.meta.env : undefined;
-  return (env && (env.VITE_BACKEND_URL as string | undefined)) || DEFAULT_BACKEND_URL;
+export function backendUrl(): string {
+  const env = typeof import.meta !== "undefined" ? import.meta.env : undefined;
+  return (env && env.VITE_BACKEND_URL) || DEFAULT_BACKEND_URL;
 }
 
 export async function analyzeEncounter(
@@ -46,4 +48,26 @@ export async function analyzeEncounter(
     } satisfies AnalyzeError;
   }
   return (await resp.json()) as DefenderResponse;
+}
+
+/** Light health probe so the UI can show a connection indicator. */
+export async function pingBackend(
+  options: {
+    fetcher?: FetchLike;
+    backendOverride?: string;
+    timeoutMs?: number;
+  } = {},
+): Promise<boolean> {
+  const fetcher = options.fetcher ?? fetch;
+  const url = `${options.backendOverride ?? backendUrl()}/health`;
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), options.timeoutMs ?? 1500);
+  try {
+    const resp = await fetcher(url, { signal: controller.signal });
+    return resp.ok;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(t);
+  }
 }

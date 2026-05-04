@@ -37,9 +37,7 @@ export function CriterionCard(props: CriterionCardProps): JSX.Element {
           {score.verdict}
         </span>
       </header>
-      <p className="mt-1 text-xs text-slate-500">
-        confidence {confidencePct}%
-      </p>
+      <p className="mt-1 text-xs text-slate-500">confidence {confidencePct}%</p>
       <ul className="mt-3 space-y-2">
         {score.evidence.map((citation, index) => (
           <li key={`${citation.source_type}-${index}`}>

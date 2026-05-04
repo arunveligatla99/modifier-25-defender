@@ -8,7 +8,14 @@ import { useId } from "react";
 import type { Site } from "../api/types";
 
 const EM_CODES = ["99212", "99213", "99214", "99215"] as const;
-const PROCEDURE_CODES = ["11720", "11721", "11055", "11056", "11057", "20600"] as const;
+const PROCEDURE_CODES = [
+  "11720",
+  "11721",
+  "11055",
+  "11056",
+  "11057",
+  "20600",
+] as const;
 const SITES: Array<{ value: Site | ""; label: string }> = [
   { value: "", label: "Unspecified" },
   { value: "L", label: "Left" },
@@ -42,7 +49,10 @@ export function EncounterInput(props: EncounterInputProps): JSX.Element {
         props.onSubmit();
       }}
     >
-      <label htmlFor={noteId} className="block text-sm font-semibold text-slate-700">
+      <label
+        htmlFor={noteId}
+        className="block text-sm font-semibold text-slate-700"
+      >
         Encounter note
       </label>
       <textarea
@@ -55,7 +65,10 @@ export function EncounterInput(props: EncounterInputProps): JSX.Element {
       />
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label htmlFor={emId} className="block text-xs font-semibold text-slate-700">
+          <label
+            htmlFor={emId}
+            className="block text-xs font-semibold text-slate-700"
+          >
             E/M code
           </label>
           <select
@@ -73,7 +86,10 @@ export function EncounterInput(props: EncounterInputProps): JSX.Element {
           </select>
         </div>
         <div>
-          <label htmlFor={procId} className="block text-xs font-semibold text-slate-700">
+          <label
+            htmlFor={procId}
+            className="block text-xs font-semibold text-slate-700"
+          >
             Procedure code
           </label>
           <select
@@ -91,7 +107,10 @@ export function EncounterInput(props: EncounterInputProps): JSX.Element {
           </select>
         </div>
         <div>
-          <label htmlFor={siteId} className="block text-xs font-semibold text-slate-700">
+          <label
+            htmlFor={siteId}
+            className="block text-xs font-semibold text-slate-700"
+          >
             Site
           </label>
           <select
