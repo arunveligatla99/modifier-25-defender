@@ -43,12 +43,16 @@ from app.schemas.corpus import CorpusChunk
 from eval.adversarial.false_positive import evaluate_false_positive_rate
 from eval.adversarial.recall import evaluate_adversarial_recall
 from eval.defensibility.accuracy import evaluate_defensibility_accuracy
+from eval.defensibility.accuracy import load_test_split as load_defensibility_test_split
+from eval.parser.field_accuracy import evaluate_field_accuracy
+from eval.parser.ground_truth import write_eval_set
 from eval.retrieval.recall_at_5 import evaluate_recall_at_5
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_REPORTS_DIR = Path("eval/reports")
 CHUNKS_PATH = Path("data/corpus/.indexes/chunks.jsonl")
+PARSER_EVAL_PATH = Path("data/parser_eval/dev.jsonl")
 
 
 def empty_report() -> dict[str, Any]:
@@ -194,6 +198,52 @@ def run_compliance_guard(payload: dict[str, Any]) -> None:
         )
 
 
+def run_parser(payload: dict[str, Any]) -> None:
+    """Compute parser field-level accuracy against the synthetic test split.
+
+    AC-003-2 requires field-level accuracy >= 0.90, where a predicted
+    field is correct when its total span length covers 80 to 120 percent
+    of the ground-truth section. Ground truth is derived from the
+    deterministic synthetic generator's section markers, regenerated on
+    every run so it stays in sync with the encounter set.
+    """
+    settings = get_settings()
+    if not settings.openai_api_key:
+        logger.warning("OPENAI_API_KEY unset; skipping parser field-accuracy harness")
+        return
+    encounters = load_defensibility_test_split()
+    if not encounters:
+        logger.warning("synthetic test split empty; skipping parser field-accuracy harness")
+        return
+    written = write_eval_set(encounters, PARSER_EVAL_PATH)
+    logger.info("parser eval set: wrote %d records to %s", written, PARSER_EVAL_PATH)
+
+    client = CachedLLMClient(
+        api_key=settings.openai_api_key,
+        model=settings.llm_model,
+        temperature=settings.llm_temperature,
+        cache_dir=settings.llm_cache_dir,
+    )
+    parser_agent = ParserAgent(client=client)
+
+    t0 = time.perf_counter()
+    report = evaluate_field_accuracy(parser_agent, eval_path=PARSER_EVAL_PATH)
+    elapsed = time.perf_counter() - t0
+
+    payload["parser"]["field_accuracy"] = round(report.accuracy, 4)
+    payload["parser"]["total_fields"] = report.total_fields
+    payload["parser"]["correct_fields"] = report.correct_fields
+    payload["parser"]["per_case"] = report.per_case
+    if encounters:
+        payload["parser"]["latency_p95_seconds"] = round(elapsed / len(encounters), 4)
+    logger.info(
+        "parser field accuracy: %d/%d = %.4f",
+        report.correct_fields,
+        report.total_fields,
+        report.accuracy,
+    )
+
+
 def run_defensibility(payload: dict[str, Any]) -> None:
     """Compute analyzer verdict and per-criterion accuracy on the test split.
 
@@ -270,6 +320,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the analyzer defensibility-accuracy sub-harness (AC-004-2/3).",
     )
+    parser.add_argument(
+        "--skip-parser",
+        action="store_true",
+        help="Skip the parser field-accuracy sub-harness (AC-003-2).",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO)
     if args.no_cache:
@@ -286,6 +341,11 @@ def main(argv: list[str] | None = None) -> int:
             run_compliance_guard(payload)
         except Exception as exc:
             logger.error("compliance guard harness failed: %s", exc)
+    if not args.skip_parser:
+        try:
+            run_parser(payload)
+        except Exception as exc:
+            logger.error("parser harness failed: %s", exc)
     if not args.skip_defensibility:
         try:
             run_defensibility(payload)
