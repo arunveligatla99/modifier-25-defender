@@ -1,23 +1,19 @@
 """FastAPI application entry point.
 
-Wires the LangGraph compiled graph behind ``POST /analyze``. The graph itself
-is built incrementally as agents land (T148). For now this module exposes
-``/healthz`` and a stub ``/analyze`` route that returns a structured 503 with
-a guidance message until the graph is wired.
+Mounts the routes from :mod:`app.api.routes` (POST /analyze) plus the
+healthz liveness probe.
 """
 
 from __future__ import annotations
 
 import logging
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
+from app.api.routes import router as analyze_router
 from app.infra.settings import get_settings
-from app.schemas.api import DefenderRequest, DefenderResponse
-
-logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -47,26 +43,7 @@ def create_app() -> FastAPI:
         """Liveness probe for docker-compose and CI."""
         return {"status": "ok", "version": __version__}
 
-    @app.post("/analyze", response_model=DefenderResponse)
-    async def analyze(_request: DefenderRequest) -> DefenderResponse:
-        """Score an encounter for Modifier 25 defensibility.
-
-        Stub during scaffolding (Phase 2 Foundational); real wiring lands in
-        T149 once the LangGraph orchestrator (T148) is built.
-        """
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "error": "not_implemented",
-                "reason": (
-                    "POST /analyze is wired in T149 (US1 wire-together). The schema "
-                    "and validation are in place; the LangGraph orchestrator and "
-                    "agents land via tasks.md before this route returns real "
-                    "responses."
-                ),
-            },
-        )
-
+    app.include_router(analyze_router)
     return app
 
 
