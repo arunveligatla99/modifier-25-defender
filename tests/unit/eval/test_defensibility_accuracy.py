@@ -102,7 +102,7 @@ class StubAnalyzer:
         site: str | None,
     ) -> DefensibilityAssessment:
         self.last_query = (em_code, procedure_code, site)
-        # Use first key in mapping that hasn't been served — caller controls
+        # Use first key in mapping that hasn't been served. Caller controls
         # ordering by passing matched encounter list.
         return next(iter(self.mapping.values()))
 

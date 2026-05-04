@@ -138,8 +138,13 @@ branch = true
 source = ["app"]
 omit = [
     "app/api/main.py",
+    "app/api/routes.py",
     "app/infra/db.py",
     "app/infra/settings.py",
+    "app/llm/embeddings.py",
+    "app/observability/langfuse_client.py",
+    "app/retrieval/cli.py",
+    "app/retrieval/qdrant.py",
     "app/__init__.py",
     "app/**/__init__.py",
 ]

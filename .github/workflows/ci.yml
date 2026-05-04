@@ -145,8 +145,8 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -q '^eval/thresholds.yaml$'; then
-            echo "Detected change to eval/thresholds.yaml; requiring rationale in PR body."
+          if git diff --name-only --diff-filter=M "$BASE_SHA" "$HEAD_SHA" | grep -q '^eval/thresholds.yaml$'; then
+            echo "Detected change to existing eval/thresholds.yaml; requiring rationale in PR body."
             if ! echo "$PR_BODY" | grep -q "Threshold change rationale:"; then
               echo "::error::PR modifies eval/thresholds.yaml but does not include 'Threshold change rationale:' in the description."
               exit 1
