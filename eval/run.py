@@ -186,6 +186,12 @@ def run_compliance_guard(payload: dict[str, Any]) -> None:
     """Compute adversarial recall and (when available) false-positive rate."""
     settings = get_settings()
     verifier = build_default_verifier(model_name=settings.nli_model)
+    # Warmup so the first model-load round-trip does not skew the
+    # latency_p95 calculation. The result is discarded.
+    try:
+        verifier.entailment_probability("warmup premise.", "warmup hypothesis.")
+    except Exception as exc:
+        logger.warning("NLI warmup failed (%s); proceeding without warmup", exc)
     t0 = time.perf_counter()
     adv = evaluate_adversarial_recall(verifier)
     elapsed = time.perf_counter() - t0
