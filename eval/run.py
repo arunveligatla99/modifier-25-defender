@@ -157,6 +157,50 @@ def _build_retriever() -> Retriever:
     )
 
 
+def _percentile(values: list[float], pct: float) -> float:
+    """Return the percentile value using nearest-rank.
+
+    Falls back to ``max(values)`` when there are fewer than 20 samples,
+    since interpolation on small samples is misleading. Mirrors the
+    helper in eval/defensibility/accuracy.py.
+    """
+    if not values:
+        return 0.0
+    if len(values) < 20:
+        return max(values)
+    sorted_vals = sorted(values)
+    idx = max(0, min(len(sorted_vals) - 1, round(pct * len(sorted_vals)) - 1))
+    return sorted_vals[idx]
+
+
+class _TimingRetriever:
+    """Wraps a retriever and records per-call latency in seconds."""
+
+    def __init__(self, inner: Any) -> None:
+        self._inner = inner
+        self.latencies: list[float] = []
+
+    def search(self, query: str) -> Any:
+        t0 = time.perf_counter()
+        result = self._inner.search(query)
+        self.latencies.append(time.perf_counter() - t0)
+        return result
+
+
+class _TimingVerifier:
+    """Wraps an NLIVerifier and records per-call latency in seconds."""
+
+    def __init__(self, inner: Any) -> None:
+        self._inner = inner
+        self.latencies: list[float] = []
+
+    def entailment_probability(self, premise: str, hypothesis: str) -> float:
+        t0 = time.perf_counter()
+        result = float(self._inner.entailment_probability(premise, hypothesis))
+        self.latencies.append(time.perf_counter() - t0)
+        return result
+
+
 def run_retrieval(payload: dict[str, Any]) -> None:
     """Compute retrieval recall@5 against the bundled question set."""
     chunks = _load_corpus_chunks()
@@ -164,15 +208,22 @@ def run_retrieval(payload: dict[str, Any]) -> None:
         logger.warning("no corpus chunks loaded; skipping retrieval recall")
         return
     retriever = _build_retriever()
-    t0 = time.perf_counter()
-    report = evaluate_recall_at_5(retriever)
-    elapsed = time.perf_counter() - t0
+    timed = _TimingRetriever(retriever)
+    # Warmup query so cold caches (BM25 first hit, embedding pool init,
+    # Qdrant connection) do not bias the latency tail.
+    try:
+        timed.search("modifier 25 warmup query")
+        timed.latencies.clear()
+    except Exception as exc:
+        logger.warning("retrieval warmup failed (%s); proceeding without warmup", exc)
+    report = evaluate_recall_at_5(timed)
     payload["retrieval"]["recall_at_5"] = round(report.recall_at_5, 4)
     payload["retrieval"]["per_question"] = report.per_question
     payload["retrieval"]["total_questions"] = report.total
     payload["retrieval"]["hits"] = report.hits
-    if report.total:
-        payload["retrieval"]["latency_p95_ms"] = round(elapsed * 1000.0 / report.total, 1)
+    if timed.latencies:
+        p95 = _percentile(timed.latencies, 0.95)
+        payload["retrieval"]["latency_p95_ms"] = round(p95 * 1000.0, 1)
     logger.info(
         "retrieval recall@%d: %d/%d = %.4f",
         5,
@@ -186,24 +237,24 @@ def run_compliance_guard(payload: dict[str, Any]) -> None:
     """Compute adversarial recall and (when available) false-positive rate."""
     settings = get_settings()
     verifier = build_default_verifier(model_name=settings.nli_model)
-    # Warmup so the first model-load round-trip does not skew the
-    # latency_p95 calculation. The result is discarded.
-    try:
-        verifier.entailment_probability("warmup premise.", "warmup hypothesis.")
-    except Exception as exc:
-        logger.warning("NLI warmup failed (%s); proceeding without warmup", exc)
-    t0 = time.perf_counter()
-    adv = evaluate_adversarial_recall(verifier)
-    elapsed = time.perf_counter() - t0
+    # Multiple warmup calls so the first DeBERTa load + tokenizer
+    # JIT + first-batch CUDA/CPU graph compilation do not bias the
+    # latency tail. Three calls is empirically enough on CI runners.
+    for _ in range(3):
+        try:
+            verifier.entailment_probability("warmup premise.", "warmup hypothesis.")
+        except Exception as exc:
+            logger.warning("NLI warmup failed (%s); proceeding without warmup", exc)
+            break
+    timed = _TimingVerifier(verifier)
+    adv = evaluate_adversarial_recall(timed)
     payload["compliance_guard"]["adversarial_recall"] = round(adv.recall, 4)
     payload["compliance_guard"]["adversarial_total"] = adv.total
     payload["compliance_guard"]["adversarial_caught"] = adv.caught
     payload["compliance_guard"]["adversarial_per_claim"] = adv.per_claim
-    if adv.total:
-        payload["compliance_guard"]["latency_p95_seconds"] = round(elapsed / adv.total, 4)
     logger.info("adversarial recall: %d/%d = %.4f", adv.caught, adv.total, adv.recall)
 
-    fp = evaluate_false_positive_rate(verifier)
+    fp = evaluate_false_positive_rate(timed)
     if fp.total:
         payload["compliance_guard"]["false_positive_rate"] = round(fp.rate, 4)
         payload["compliance_guard"]["false_positive_per_claim"] = fp.per_claim
@@ -212,6 +263,10 @@ def run_compliance_guard(payload: dict[str, Any]) -> None:
         logger.info(
             "false-positive eval set absent; leaving compliance_guard.false_positive_rate at 1.0"
         )
+
+    if timed.latencies:
+        p95 = _percentile(timed.latencies, 0.95)
+        payload["compliance_guard"]["latency_p95_seconds"] = round(p95, 4)
 
 
 def run_parser(payload: dict[str, Any]) -> None:

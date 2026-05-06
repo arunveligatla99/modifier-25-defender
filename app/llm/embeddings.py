@@ -6,14 +6,20 @@ Thin wrapper for ``text-embedding-3-large``. Used by:
   Qdrant.
 - ``app.api.routes`` for query-time dense retrieval.
 
-Includes a small in-memory LRU cache so per-criterion analyzer queries that
-repeat across requests do not re-bill OpenAI within a process lifetime.
+Includes an in-memory LRU and a disk-backed content-hash cache so the
+eval harness does not re-bill OpenAI for fixed inputs and so CI runs
+deterministically against committed cache files. The disk cache lives
+at ``<llm_cache_dir>/embeddings/`` and is keyed by SHA-256 of
+``(model, text)``.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, Protocol
 
 from app.infra.settings import get_settings
@@ -54,11 +60,16 @@ def embed_text(
     cached = _cached_embed(text, used_model)
     if cached is not None:
         return list(cached)
+    disk_cached = _disk_cache_read(text, used_model, settings.llm_cache_dir)
+    if disk_cached is not None:
+        _cache_set(text, used_model, tuple(disk_cached))
+        return disk_cached
     if client is None:
         client = _make_default_client(used_key)
     raw = client.embeddings_create(model=used_model, input=text)
     vector = _vector_from(raw)
     _cache_set(text, used_model, tuple(vector))
+    _disk_cache_write(text, used_model, vector, settings.llm_cache_dir)
     return vector
 
 
@@ -141,3 +152,45 @@ def _cache_set(text: str, model: str, vector: tuple[float, ...]) -> None:
         for key in list(_EMBED_CACHE.keys())[:1024]:
             _EMBED_CACHE.pop(key, None)
     _EMBED_CACHE[(text, model)] = vector
+
+
+# ---------------------------------------------------------------------------
+# Disk-backed content-hash cache. Same shape as the LLM cache: deterministic
+# SHA-256 of (model, text) -> a JSON file containing the vector. Persisted
+# across runs so CI does not re-bill embeddings for the eval question set.
+# ---------------------------------------------------------------------------
+
+
+def _disk_cache_dir(base_dir: Path) -> Path:
+    return Path(base_dir) / "embeddings"
+
+
+def _disk_cache_key(text: str, model: str) -> str:
+    payload = json.dumps({"model": model, "text": text}, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _disk_cache_read(text: str, model: str, base_dir: Path) -> list[float] | None:
+    path = _disk_cache_dir(base_dir) / f"{_disk_cache_key(text, model)}.json"
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        vec = data.get("vector")
+        if isinstance(vec, list):
+            return [float(v) for v in vec]
+    except (OSError, json.JSONDecodeError, ValueError, TypeError) as exc:
+        logger.warning("embedding cache read failed for %s: %s", path.name, exc)
+    return None
+
+
+def _disk_cache_write(text: str, model: str, vector: list[float], base_dir: Path) -> None:
+    cache_dir = _disk_cache_dir(base_dir)
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        path = cache_dir / f"{_disk_cache_key(text, model)}.json"
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps({"vector": vector}), encoding="utf-8")
+        tmp.replace(path)
+    except OSError as exc:
+        logger.warning("embedding cache write failed: %s", exc)
