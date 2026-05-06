@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0035_9d2fb9f2",
+  "note_text": "CC: follow up plantar fasciitis\n\nHPI: weeks of symptoms relating to multiple painful calluses.\n\nExam: plantar callus area consistent with multiple painful calluses; no other findings recorded.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents. Mentioned other complaints, no separate management plan.\n\nProcedure: Paring of multiple hyperkeratotic lesions performed. Tolerated well, no immediate complications.",
+  "em_code": "99215",
+  "procedure_code": "11056",
+  "site": null,
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "FAIL",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "plantar_fasciitis_followup",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_few",
+      "site": "none",
+      "em_level": "99215",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "low",
+      "exam_separability": "none",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "test"
+}

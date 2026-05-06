@@ -1,0 +1,24 @@
+AAPC Modifier 25 Educational Series (placeholder)
+
+This is a placeholder. Real corpus ingestion replaces this file with the
+publicly accessible AAPC educational article (paywalled content is not
+ingested).
+
+Modifier 25 indicates that on the day a procedure or service was
+performed, the patient's condition required a significant, separately
+identifiable Evaluation and Management service above and beyond the
+usual preoperative and postoperative care.
+
+Tips for documentation:
+
+- The chief complaint must name a problem that is distinct from the
+  procedure's primary indication. A chief complaint that reads as the
+  procedure indication does not establish separability.
+- Exam findings must include observations on at least one body part or
+  condition that is not the procedure site. Generic statements of
+  unremarkable findings are not sufficient.
+- The medical decision making must reflect an independent judgment with
+  risks, data review, and a management plan distinct from the procedure
+  decision.
+- When the E/M and procedure are at different anatomic sites, append the
+  appropriate LT/RT or T1 to T9 modifier in addition to Modifier 25.

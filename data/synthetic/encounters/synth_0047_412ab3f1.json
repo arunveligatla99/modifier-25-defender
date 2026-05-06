@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0047_412ab3f1",
+  "note_text": "CC: painful callus on the foot\n\nHPI: 6 months of symptoms relating to extensive callus burden with pain on ambulation. Sensory neuropathy noted on prior visits.\n\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Paring of extensive hyperkeratotic lesions performed. Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99214",
+  "procedure_code": "11057",
+  "site": "L",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "PASS",
+    "independent_mdm": "PASS",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "callus_pain",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "False",
+      "procedure_type": "callus_paring_many",
+      "site": "L",
+      "em_level": "99214",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "high",
+      "exam_separability": "high",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "dev"
+}

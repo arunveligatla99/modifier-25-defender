@@ -1,0 +1,12 @@
+{
+  "$comment": "v1 Modifier 25 Defender CPT allowlist. Per AC-001-5 the synthetic data covers at least 6 distinct procedure codes. This allowlist gates DefenderRequest.procedure_code at runtime in app/api/routes.py (T149).",
+  "version": 1,
+  "codes": [
+    { "code": "11720", "description": "Debridement of nail(s) by any method; 1 to 5" },
+    { "code": "11721", "description": "Debridement of nail(s) by any method; 6 or more" },
+    { "code": "11055", "description": "Paring or cutting of benign hyperkeratotic lesion; single lesion" },
+    { "code": "11056", "description": "Paring or cutting of benign hyperkeratotic lesion; 2 to 4 lesions" },
+    { "code": "11057", "description": "Paring or cutting of benign hyperkeratotic lesion; more than 4 lesions" },
+    { "code": "20600", "description": "Arthrocentesis, aspiration and/or injection, small joint or bursa" }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0101_6e69de33",
+  "note_text": "CC: ingrown toenail and unrelated lesser-toe corn\nHPI: weeks of symptoms relating to painful plantar callus. Patient also reports a distinct symptom requiring separate evaluation.\nExam: plantar callus area consistent with painful plantar callus. Additional finding: mild tenderness at a separate site.\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\nProcedure: Paring of single hyperkeratotic lesion performed (RT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99212",
+  "procedure_code": "11055",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "ingrown_toenail",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_single",
+      "site": "R",
+      "em_level": "99212",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "medium",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "train"
+}

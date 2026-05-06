@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0024_9f31e9e2",
+  "note_text": "CC: routine diabetic foot evaluation\nHPI: weeks of symptoms relating to extensive callus burden with pain on ambulation. PMH: Type 2 diabetes mellitus.\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Additional finding: mild tenderness at a separate site.\nMDM: discussed risks and benefits of the planned procedure; patient consents. Mentioned other complaints, no separate management plan.\nProcedure: Paring of extensive hyperkeratotic lesions performed (LT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99214",
+  "procedure_code": "11057",
+  "site": "L",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "WEAK",
+    "independent_mdm": "FAIL",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "diabetic_foot_check",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_many",
+      "site": "L",
+      "em_level": "99214",
+      "separable_problem": "False",
+      "site_specificity_stated": "True",
+      "mdm_separability": "low",
+      "exam_separability": "medium",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "train"
+}

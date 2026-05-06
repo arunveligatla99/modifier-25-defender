@@ -1,0 +1,20 @@
+{"sample_id": "synth_0002_bc3f33e6::independent_mdm::0", "reasonable": true, "notes": "Ties to midfoot stiffness from CC; describes WEAK->PASS lift via concrete plan."}
+{"sample_id": "synth_0002_bc3f33e6::separate_exam::1", "reasonable": true, "notes": "Adds specific finding tied to encounter's mention of separate-site tenderness."}
+{"sample_id": "synth_0006_2a482e69::distinct_cc::0", "reasonable": false, "notes": "Fabricates 'mobility/daily activities' framing not present in the encounter; CC must name a distinct problem, not a functional reframe."}
+{"sample_id": "synth_0006_2a482e69::separate_exam::1", "reasonable": true, "notes": "Ties to diabetes/neuropathy PMH; suggests circulation/sensation exam consistent with policy."}
+{"sample_id": "synth_0010_ac095a24::independent_mdm::0", "reasonable": true, "notes": "Ties to right ankle swelling in CC; appropriate independent MDM framing."}
+{"sample_id": "synth_0010_ac095a24::separate_exam::1", "reasonable": true, "notes": "Mentions separate-site tenderness consistent with encounter cue."}
+{"sample_id": "synth_0012_67434f8a::distinct_cc::0", "reasonable": false, "notes": "Generic template ('could focus on a different issue'); does not tie to any specific symptom in this encounter."}
+{"sample_id": "synth_0012_67434f8a::separate_exam::1", "reasonable": true, "notes": "Generic but actionable: suggests skin/other foot structures, which is clinically valid for nail debridement encounters."}
+{"sample_id": "synth_0017_bec9990b::independent_mdm::0", "reasonable": true, "notes": "Ties to neuropathy and PVD from PMH; appropriate MDM language."}
+{"sample_id": "synth_0017_bec9990b::separate_exam::1", "reasonable": true, "notes": "Ties to neuropathy and PVD; valid separate exam framing."}
+{"sample_id": "synth_0017_bec9990b::site_specificity::2", "reasonable": false, "notes": "Category mismatch: neuropathy and PVD are conditions, not anatomic sites. Site-specificity requires LT/RT modifiers on different feet/toes."}
+{"sample_id": "synth_0019_1e820e17::distinct_cc::0", "reasonable": true, "notes": "Generic but directionally correct."}
+{"sample_id": "synth_0019_1e820e17::separate_exam::1", "reasonable": true, "notes": "Generic but actionable; suggests examining areas other than calluses."}
+{"sample_id": "synth_0019_1e820e17::site_specificity::2", "reasonable": true, "notes": "Accurate description of LT/RT/T1-T9 modifier requirement."}
+{"sample_id": "synth_0022_aaf1ae81::separate_exam::0", "reasonable": true, "notes": "Ties to encounter (knee mention) and lists specific findings (swelling, ROM)."}
+{"sample_id": "synth_0022_aaf1ae81::site_specificity::1", "reasonable": true, "notes": "Names specific anatomical sites and correct modifier guidance."}
+{"sample_id": "synth_0026_aade4da0::separate_exam::0", "reasonable": true, "notes": "Ties to 'burning sensation in forefoot' from CC; adds nerve/inflammation assessment."}
+{"sample_id": "synth_0029_47621b5a::separate_exam::0", "reasonable": true, "notes": "Ties to heel pain in CC; documents tenderness/swelling consistently."}
+{"sample_id": "synth_0029_47621b5a::site_specificity::1", "reasonable": true, "notes": "Names plantar calluses vs heel pain as distinct sites; correct modifier guidance."}
+{"sample_id": "synth_0031_9f0f19e4::independent_mdm::0", "reasonable": true, "notes": "Ties to contralateral knee pain in CC; appropriate independent MDM framing."}

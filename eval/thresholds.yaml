@@ -1,0 +1,51 @@
+# PR-blocking quality gates for Modifier 25 Defender (EPIC-007 / T301).
+#
+# Each threshold corresponds to an acceptance criterion in spec
+# specs/001-modifier-25-defender/spec.md. Threshold changes require a PR
+# whose description contains "Threshold change rationale:" plus at least
+# 50 characters of justification (enforced by .github/workflows/ci.yml).
+# Constitution + AC-007-6: gates are not advisory and may not be bypassed.
+
+retrieval:
+  recall_at_5:
+    minimum: 0.85           # AC-002-3
+  latency_p95_ms:
+    maximum: 800            # AC-002-5
+
+parser:
+  field_accuracy:
+    minimum: 0.90           # AC-003-2
+  latency_p95_seconds:
+    maximum: 5              # AC-003-5
+
+analyzer:
+  verdict_accuracy:
+    minimum: 0.85           # AC-004-2
+  per_criterion_accuracy:
+    minimum: 0.80           # AC-004-3 (averaged across the four criteria)
+  faithfulness:
+    minimum: 0.88           # AC-004-5 (RAGAS)
+  latency_p95_seconds:
+    maximum: 20             # AC-004-6
+
+compliance_guard:
+  adversarial_recall:
+    minimum: 1.00           # AC-005-2 (NON-NEGOTIABLE)
+  false_positive_rate:
+    maximum: 0.10           # AC-005-3
+  latency_p95_seconds:
+    maximum: 3              # AC-005-5
+
+drafter:
+  latency_p95_seconds:
+    maximum: 10             # AC-006-5
+  clinical_reasonableness:
+    minimum: 0.80           # AC-006-4 (manual review of 20 dev-split suggestions)
+
+end_to_end:
+  latency_p95_seconds:
+    maximum: 30             # composed budget per spec EPIC-004 7.2 / spec.md SC-001
+
+ui:
+  render_after_response_ms:
+    maximum: 500            # AC-008-1

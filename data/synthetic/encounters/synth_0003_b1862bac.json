@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0003_b1862bac",
+  "note_text": "CC: ingrown toenail\n\nHPI: weeks of symptoms relating to extensive callus burden with pain on ambulation.\n\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation; general inspection of the foot otherwise unremarkable.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Paring of extensive hyperkeratotic lesions performed. Tolerated well, no immediate complications.",
+  "em_code": "99214",
+  "procedure_code": "11057",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "ingrown_toenail",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_many",
+      "site": "B",
+      "em_level": "99214",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "low",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}

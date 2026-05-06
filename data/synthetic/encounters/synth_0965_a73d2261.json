@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0965_a73d2261",
+  "note_text": "CC: follow up plantar fasciitis with new lateral foot pain\n\nHPI: 6 months of symptoms relating to extensive callus burden with pain on ambulation. Patient also reports a distinct symptom requiring separate evaluation. Peripheral vascular disease noted.\n\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Paring of extensive hyperkeratotic lesions performed (LT and RT modifiers documented). Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99212",
+  "procedure_code": "11057",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "PASS",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "PASS",
+    "parameter_space_index": {
+      "presenting_condition": "plantar_fasciitis_followup",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "True",
+      "procedure_type": "callus_paring_many",
+      "site": "B",
+      "em_level": "99212",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "high",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "train"
+}

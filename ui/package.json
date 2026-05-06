@@ -1,0 +1,43 @@
+{
+  "name": "modifier-25-defender-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Demo UI for Modifier 25 Defender (v1 MVP).",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\""
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6",
+    "@testing-library/react": "^16.0",
+    "@testing-library/user-event": "^14.5",
+    "@types/react": "^18.3",
+    "@types/react-dom": "^18.3",
+    "@typescript-eslint/eslint-plugin": "^8.13",
+    "@typescript-eslint/parser": "^8.13",
+    "@vitejs/plugin-react": "^4.3",
+    "autoprefixer": "^10.4",
+    "eslint": "^9.14",
+    "eslint-plugin-react-hooks": "^5.0",
+    "eslint-plugin-react-refresh": "^0.4",
+    "jsdom": "^25.0",
+    "postcss": "^8.4",
+    "prettier": "^3.3",
+    "tailwindcss": "^3.4",
+    "typescript": "^5.6",
+    "vite": "^5.4",
+    "vitest": "^2.1"
+  }
+}

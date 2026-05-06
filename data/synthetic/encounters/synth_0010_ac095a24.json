@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0010_ac095a24",
+  "note_text": "CC: new heel pain plus right ankle swelling\n\nHPI: weeks of symptoms relating to first MTP joint inflammation with refractory pain. Patient also reports a distinct symptom requiring separate evaluation. Sensory neuropathy noted on prior visits.\n\nExam: first MTP joint consistent with first MTP joint inflammation with refractory pain. Additional finding: mild tenderness at a separate site.\n\nMDM: discussed risks and benefits of the planned procedure; patient consents.\n\nProcedure: Aspiration and corticosteroid injection of the first MTP joint performed (RT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99213",
+  "procedure_code": "20600",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "FAIL",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "heel_pain",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "False",
+      "procedure_type": "joint_injection",
+      "site": "R",
+      "em_level": "99213",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "none",
+      "exam_separability": "medium",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "test"
+}

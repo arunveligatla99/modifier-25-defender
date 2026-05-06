@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0129_db72cd51",
+  "note_text": "CC: diabetic foot evaluation with new dorsal swelling\n\nHPI: weeks of symptoms relating to extensive callus burden with pain on ambulation. Patient also reports a distinct symptom requiring separate evaluation. Peripheral vascular disease noted.\n\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Additional finding: mild tenderness at a separate site.\n\nMDM: addressed the procedure as well as a separate complaint; considered conservative options for the separate complaint and deferred a decision.\n\nProcedure: Paring of extensive hyperkeratotic lesions performed (RT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99214",
+  "procedure_code": "11057",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "WEAK",
+    "site_specificity": "PASS",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "diabetic_foot_check",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "True",
+      "procedure_type": "callus_paring_many",
+      "site": "R",
+      "em_level": "99214",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "medium",
+      "exam_separability": "medium",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "test"
+}

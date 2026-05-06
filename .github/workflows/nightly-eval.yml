@@ -1,0 +1,52 @@
+# Nightly full eval against main, no cache. Catches drift the PR cache might mask.
+# Posts a summary issue when any threshold violation occurs.
+
+name: nightly-eval
+
+on:
+  schedule:
+    # Daily at 06:00 UTC.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+env:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: "1"
+
+jobs:
+  full-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.11.8"
+      - run: uv sync --extra dev
+      - name: Run full eval, no cache
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: uv run python -m eval.run --no-cache
+      - name: Check thresholds
+        id: gates
+        continue-on-error: true
+        run: uv run python -m eval.check_gates --report eval/reports/latest.json
+      - name: Upload eval report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-eval-report
+          path: eval/reports/latest.json
+      - name: Post issue on regression
+        if: steps.gates.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('eval/reports/latest.json', 'utf8'));
+            const date = new Date().toISOString().slice(0, 10);
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `nightly-eval regression on main (${date})`,
+              body: '```json\n' + JSON.stringify(report, null, 2) + '\n```',
+              labels: ['eval-regression']
+            });

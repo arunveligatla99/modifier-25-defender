@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0264_1a3f57b7",
+  "note_text": "CC: thick painful nails plus new heel pain on ambulation\nHPI: weeks of symptoms relating to first MTP joint inflammation with refractory pain. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus. Sensory neuropathy noted on prior visits. Peripheral vascular disease noted.\nExam: first MTP joint consistent with first MTP joint inflammation with refractory pain. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\nProcedure: Aspiration and corticosteroid injection of the first MTP joint performed (LT and RT modifiers documented). Tolerated well, no immediate complications.",
+  "em_code": "99214",
+  "procedure_code": "20600",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "PASS",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "PASS",
+    "parameter_space_index": {
+      "presenting_condition": "thick_painful_nails",
+      "diabetes": "True",
+      "neuropathy": "True",
+      "pvd": "True",
+      "procedure_type": "joint_injection",
+      "site": "B",
+      "em_level": "99214",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "high",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "train"
+}

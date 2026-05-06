@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0749_d0595d4c",
+  "note_text": "CC: ankle arthritis flare with new contralateral knee pain\n\nHPI: 6 months of symptoms relating to first MTP joint inflammation with refractory pain. Patient also reports a distinct symptom requiring separate evaluation. Sensory neuropathy noted on prior visits.\n\nExam: first MTP joint consistent with first MTP joint inflammation with refractory pain. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Aspiration and corticosteroid injection of the first MTP joint performed (RT modifier documented). Tolerated well, no immediate complications.\n\n(End of note.)",
+  "em_code": "99212",
+  "procedure_code": "20600",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "PASS",
+    "independent_mdm": "PASS",
+    "site_specificity": "PASS",
+    "overall": "PASS",
+    "parameter_space_index": {
+      "presenting_condition": "ankle_arthritis_flare",
+      "diabetes": "False",
+      "neuropathy": "True",
+      "pvd": "False",
+      "procedure_type": "joint_injection",
+      "site": "R",
+      "em_level": "99212",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "high",
+      "exam_separability": "high",
+      "narrative_style": "verbose"
+    }
+  },
+  "split": "test"
+}

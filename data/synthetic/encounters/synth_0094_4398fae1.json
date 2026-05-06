@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0094_4398fae1",
+  "note_text": "CC: diabetic foot evaluation with new dorsal swelling\n\nHPI: weeks of symptoms relating to first MTP joint inflammation with refractory pain. Patient also reports a distinct symptom requiring separate evaluation. Peripheral vascular disease noted.\n\nExam: first MTP joint consistent with first MTP joint inflammation with refractory pain. Additional finding: mild tenderness at a separate site.\n\nMDM: addressed an independent problem with risks, data review (X-ray pending), and a management plan distinct from the procedure decision; shared decision making documented.\n\nProcedure: Aspiration and corticosteroid injection of the first MTP joint performed. Tolerated well, no immediate complications.",
+  "em_code": "99213",
+  "procedure_code": "20600",
+  "site": "L",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "PASS",
+    "site_specificity": "WEAK",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "diabetic_foot_check",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "True",
+      "procedure_type": "joint_injection",
+      "site": "L",
+      "em_level": "99213",
+      "separable_problem": "True",
+      "site_specificity_stated": "False",
+      "mdm_separability": "high",
+      "exam_separability": "medium",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}

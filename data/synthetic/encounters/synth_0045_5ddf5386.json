@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0045_5ddf5386",
+  "note_text": "CC: routine diabetic foot evaluation\nHPI: weeks of symptoms relating to thickened painful nails.\nExam: nails examined consistent with thickened painful nails; no other findings recorded.\nMDM: discussed risks and benefits of the planned procedure; patient consents.\nProcedure: Debridement of 1 to 5 thickened nails performed with sterile technique. Tolerated well, no immediate complications.",
+  "em_code": "99213",
+  "procedure_code": "11720",
+  "site": "B",
+  "ground_truth": {
+    "distinct_cc": "FAIL",
+    "separate_exam": "FAIL",
+    "independent_mdm": "FAIL",
+    "site_specificity": "WEAK",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "diabetic_foot_check",
+      "diabetes": "False",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "nail_debridement_few",
+      "site": "B",
+      "em_level": "99213",
+      "separable_problem": "False",
+      "site_specificity_stated": "False",
+      "mdm_separability": "none",
+      "exam_separability": "none",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "train"
+}

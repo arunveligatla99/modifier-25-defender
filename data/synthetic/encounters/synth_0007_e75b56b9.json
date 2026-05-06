@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0007_e75b56b9",
+  "note_text": "CC: new heel pain plus right ankle swelling\nHPI: weeks of symptoms relating to extensive callus burden with pain on ambulation. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus.\nExam: plantar callus area consistent with extensive callus burden with pain on ambulation. Separately identified: tenderness at a distinct anatomic location with documented quality, palpable swelling, and pain on resisted motion.\nMDM: discussed risks and benefits of the planned procedure; patient consents. Mentioned other complaints, no separate management plan.\nProcedure: Paring of extensive hyperkeratotic lesions performed. Tolerated well, no immediate complications.",
+  "em_code": "99215",
+  "procedure_code": "11057",
+  "site": null,
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "PASS",
+    "independent_mdm": "FAIL",
+    "site_specificity": "PASS",
+    "overall": "FAIL",
+    "parameter_space_index": {
+      "presenting_condition": "heel_pain",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "callus_paring_many",
+      "site": "none",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "False",
+      "mdm_separability": "low",
+      "exam_separability": "high",
+      "narrative_style": "terse"
+    }
+  },
+  "split": "train"
+}

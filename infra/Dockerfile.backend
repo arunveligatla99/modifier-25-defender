@@ -1,0 +1,42 @@
+# Modifier 25 Defender backend image.
+# Python 3.11 slim base, dependencies installed via uv, runs uvicorn against
+# app.api.main:app. Image is dev-oriented; production hardening is deferred
+# (cloud deployment out of scope for v1).
+
+FROM python:3.11-slim AS base
+
+# Install minimal system packages for psycopg + transformers wheel deps.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    ca-certificates curl build-essential libpq-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install uv (Astral) for fast dependency resolution.
+COPY --from=ghcr.io/astral-sh/uv:0.11.8 /uv /usr/local/bin/uv
+
+WORKDIR /srv
+
+# Copy lockfile + project metadata first for better layer caching.
+COPY pyproject.toml /srv/pyproject.toml
+COPY README.md /srv/README.md
+COPY LICENSE /srv/LICENSE
+
+# Sync deps. The dev extra is included so the backend image can run pytest
+# inside the container if needed for integration smoke tests.
+RUN uv sync --extra dev --frozen --no-install-project || uv sync --extra dev --no-install-project
+
+# Project source is bind-mounted by docker-compose for hot reload during dev.
+# When building for non-mounted use, copy app/ explicitly (commented for now).
+# COPY app /srv/app
+# COPY prompts /srv/prompts
+# COPY data /srv/data
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUTF8=1
+ENV PATH=/srv/.venv/bin:$PATH
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

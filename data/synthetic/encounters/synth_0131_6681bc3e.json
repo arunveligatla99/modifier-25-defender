@@ -1,0 +1,29 @@
+{
+  "encounter_id": "synth_0131_6681bc3e",
+  "note_text": "CC: hallux MTP pain with new midfoot stiffness\n\nHPI: weeks of symptoms relating to thickened painful nails. Patient also reports a distinct symptom requiring separate evaluation. PMH: Type 2 diabetes mellitus.\n\nExam: nails examined consistent with thickened painful nails. Additional finding: mild tenderness at a separate site.\n\nMDM: addressed the procedure as well as a separate complaint; considered conservative options for the separate complaint and deferred a decision.\n\nProcedure: Debridement of 1 to 5 thickened nails performed with sterile technique (RT modifier documented). Tolerated well, no immediate complications.",
+  "em_code": "99215",
+  "procedure_code": "11720",
+  "site": "R",
+  "ground_truth": {
+    "distinct_cc": "PASS",
+    "separate_exam": "WEAK",
+    "independent_mdm": "WEAK",
+    "site_specificity": "PASS",
+    "overall": "WEAK",
+    "parameter_space_index": {
+      "presenting_condition": "hallux_pain",
+      "diabetes": "True",
+      "neuropathy": "False",
+      "pvd": "False",
+      "procedure_type": "nail_debridement_few",
+      "site": "R",
+      "em_level": "99215",
+      "separable_problem": "True",
+      "site_specificity_stated": "True",
+      "mdm_separability": "medium",
+      "exam_separability": "medium",
+      "narrative_style": "standard"
+    }
+  },
+  "split": "train"
+}
