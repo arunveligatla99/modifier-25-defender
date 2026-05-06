@@ -1,10 +1,18 @@
 /**
  * Typed POST /analyze client with demo-mode fallback.
  *
- * Production: hits VITE_BACKEND_URL (default http://localhost:8000) /analyze.
- * Demo: when the backend is unreachable, the AnalyzePage falls back to
- * canned responses bundled in src/fixtures/sampleEncounters.ts so the
- * UI is usable for live demos without infra.
+ * Default backendUrl() is empty so the UI issues SAME-ORIGIN requests
+ * to /healthz and /analyze. The Vite dev server (see ui/vite.config.ts)
+ * proxies those paths to the FastAPI backend on localhost:8000. This
+ * lets the UI work behind an https tunnel (e.g. ngrok) without hitting
+ * mixed-content blocks or CORS preflight failures, because the browser
+ * never sees a cross-origin URL. Set VITE_BACKEND_URL in production
+ * deployments where the backend lives at a different absolute origin.
+ *
+ * Demo: when the backend is unreachable at the network layer, the
+ * AnalyzePage falls back to canned responses bundled in
+ * src/fixtures/sampleEncounters.ts so the UI is usable for live demos
+ * without infra.
  *
  * The fetcher is injectable for unit tests.
  */
@@ -20,11 +28,13 @@ export interface AnalyzeError {
 
 export type FetchLike = typeof fetch;
 
-const DEFAULT_BACKEND_URL = "http://localhost:8000";
+const DEFAULT_BACKEND_URL = "";
 
 export function backendUrl(): string {
   const env = typeof import.meta !== "undefined" ? import.meta.env : undefined;
-  return (env && env.VITE_BACKEND_URL) || DEFAULT_BACKEND_URL;
+  const configured = env?.VITE_BACKEND_URL;
+  if (typeof configured === "string") return configured;
+  return DEFAULT_BACKEND_URL;
 }
 
 export async function analyzeEncounter(

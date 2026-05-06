@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     llm_cache_dir: Path = Field(default=Path("eval/.cache"), alias="LLM_CACHE_DIR")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     synthetic_data_seed: int = Field(default=42, alias="SYNTHETIC_DATA_SEED")
+    cors_extra_origins: str = Field(default="", alias="CORS_EXTRA_ORIGINS")
 
 
 def get_settings() -> Settings:

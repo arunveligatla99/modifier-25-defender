@@ -31,10 +31,17 @@ def create_app() -> FastAPI:
         ),
     )
 
+    # CORS allowlist. Localhost dev origins are always allowed. Ngrok
+    # tunnels (free + paid) are allowed via regex so demo recordings
+    # against a tunneled UI work without recompiling the image. Set
+    # CORS_EXTRA_ORIGINS in the environment to add explicit origins for
+    # custom deployments.
+    extra = [o.strip() for o in (settings.cors_extra_origins or "").split(",") if o.strip()]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://localhost:3000"],
-        allow_methods=["GET", "POST"],
+        allow_origins=["http://localhost:5173", "http://localhost:3000", *extra],
+        allow_origin_regex=r"https?://[a-z0-9-]+\.ngrok(-free)?\.(app|dev|io)$",
+        allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
 
